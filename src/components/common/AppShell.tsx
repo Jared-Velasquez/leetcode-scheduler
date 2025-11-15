@@ -4,7 +4,14 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/navigation/AppSidebar";
 
-export function AppShell({ children }: { children: ReactNode }) {
+import { HomePage } from "@/pages/HomePage";
+import { ProblemsPage } from "@/pages/ProblemsPage";
+import { ProblemPage } from "@/pages/ProblemPage";
+import { SettingsPage } from "@/pages/SettingsPage";
+import { PatternsPage } from "@/pages/PatternsPage";
+import { Route, Routes } from "react-router-dom";
+
+export function AppShell() {
     return (
         <div className="flex h-screen w-screen bg-background text-foreground">
             <SidebarProvider>
@@ -16,7 +23,13 @@ export function AppShell({ children }: { children: ReactNode }) {
                     <ScrollArea className="flex-1">
                         <div className="p-6">
                             <SidebarTrigger />
-                            {children}
+                            <Routes>
+                                <Route path="/" element={<HomePage />} />
+                                <Route path="/problems" element={<ProblemsPage />} />
+                                <Route path="/problems/:id" element={<ProblemPage />} />
+                                <Route path="/patterns" element={<PatternsPage />} />
+                                <Route path="/settings" element={<SettingsPage />} />
+                            </Routes>
                         </div>
                     </ScrollArea>
                 </div>
