@@ -9,6 +9,8 @@ import { ProblemsPage } from "./pages/ProblemsPage";
 import { ProblemPage } from "./pages/ProblemPage";
 import { PatternsPage } from "./pages/PatternsPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import { useEffect, useState } from "react";
+import { initDb } from "@/lib/db";
 
 // Notable components from ShadCN:
 // ResizablePanel, ResizableHandle
@@ -34,6 +36,25 @@ import { SettingsPage } from "./pages/SettingsPage";
 // Toolbar
 
 function App() {
+    const [dbReady, setDbReady] = useState(false);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                await initDb();
+                setDbReady(true);
+            } catch (error) {
+                console.error("Failed to initialize database:", error);
+            }
+        })();
+    }, []);
+
+    if (!dbReady) {
+        return (
+            <div>DB loading...</div>
+        );
+    }
+
     return (
         <div className="flex min-h-svh w-screen bg-background text-foreground">
             <SidebarProvider>
