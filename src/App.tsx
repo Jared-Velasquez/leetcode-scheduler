@@ -1,5 +1,5 @@
 import "./App.css";
-import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
+import { SidebarProvider } from "./components/ui/sidebar";
 import { AppSidebar } from "./components/navigation/AppSidebar";
 import { Separator } from "./components/ui/separator";
 import { ScrollArea } from "./components/ui/scroll-area";
@@ -34,30 +34,29 @@ import { SettingsPage } from "./pages/SettingsPage";
 // Toolbar
 
 function App() {
-  return (
-    <div className="flex h-screen w-screen bg-background text-foreground">
-        <SidebarProvider>
-            <AppSidebar />
+    return (
+        <div className="flex h-screen w-screen bg-background text-foreground">
+            <SidebarProvider>
+                <AppSidebar />
 
-            <div className="flex flex-col flex-1 min-w-0">
-                <Separator />
+                <div className="flex flex-col flex-1 min-w-0">
+                    <Separator />
 
-                <ScrollArea className="flex-1">
-                    <div className="p-6">
-                        <SidebarTrigger />
-                        <Routes>
-                            <Route path="/" element={<HomePage />} />
-                            <Route path="/problems" element={<ProblemsPage />} />
-                            <Route path="/problems/:id" element={<ProblemPage />} />
-                            <Route path="/patterns" element={<PatternsPage />} />
-                            <Route path="/settings" element={<SettingsPage />} />
-                        </Routes>
-                    </div>
-                </ScrollArea>
-            </div>
-        </SidebarProvider>
-    </div>
-  );
+                    <ScrollArea className="flex-1">
+                        <div className="p-6">
+                            <Routes>
+                                <Route path="/" element={<HomePage />} />
+                                <Route path="/problems" element={<ProblemsPage />} />
+                                <Route path="/problems/:id" element={<ProblemPage />} />
+                                <Route path="/patterns" element={<PatternsPage />} />
+                                <Route path="/settings" element={<SettingsPage />} />
+                            </Routes>
+                        </div>
+                    </ScrollArea>
+                </div>
+            </SidebarProvider>
+        </div>
+    );
 }
 
 export default App;

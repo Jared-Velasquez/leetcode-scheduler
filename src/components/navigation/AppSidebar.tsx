@@ -8,7 +8,8 @@ import {
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
-    SidebarMenuItem
+    SidebarMenuItem,
+    SidebarTrigger
 } from "@/components/ui/sidebar";
 import HomeIcon from '@mui/icons-material/Home';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -21,22 +22,13 @@ export function AppSidebar() {
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader className="px-3 py-4">
-                <div className="flex items-center gap-2 group-data-[state=collapsed]:justify-center">
-                    <div
-                        className="
-                            flex h-8 w-8 shrink-0 items-center justify-left
-                            rounded-lg text-primary
-                        "
-                    >
-                        <CalendarMonthIcon />
-                    </div>
-
-                    <div className="flex flex-col leading-tight group-data-[state=collapsed]:hidden">
-                        <span className="text-sm font-semibold">Leetcode</span>
-                        <span className="text-sm font-semibold">Scheduler</span>
-                    </div>
+                <div className="flex flex-col leading-tight group-data-[state=collapsed]:hidden">
+                    <span className="text-sm font-semibold">Leetcode</span>
+                    <span className="text-sm font-semibold">Scheduler</span>
                 </div>
             </SidebarHeader>
+
+            <SidebarTrigger className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-accent" />
 
             <SidebarContent>
                 <SidebarGroup />
