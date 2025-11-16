@@ -35,14 +35,14 @@ import { SettingsPage } from "./pages/SettingsPage";
 
 function App() {
     return (
-        <div className="flex h-screen w-screen bg-background text-foreground">
+        <div className="flex min-h-svh w-screen bg-background text-foreground">
             <SidebarProvider>
                 <AppSidebar />
 
                 <div className="flex flex-col flex-1 min-w-0">
                     <Separator />
 
-                    <ScrollArea className="flex-1">
+                    <ScrollArea className="flex-1 min-h-0">
                         <div className="p-6">
                             <Routes>
                                 <Route path="/" element={<HomePage />} />

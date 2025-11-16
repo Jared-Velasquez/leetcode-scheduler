@@ -28,7 +28,7 @@ export function AppSidebar() {
                 </div>
             </SidebarHeader>
 
-            <SidebarTrigger className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-accent" />
+            {/* <SidebarTrigger className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-accent" /> */}
 
             <SidebarContent>
                 <SidebarGroup />
