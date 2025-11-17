@@ -1,6 +1,6 @@
 export type Difficulty = "EASY" | "MEDIUM" | "HARD";
 
-export interface Problem {
+export interface ProblemSchema {
     id: number;
     title: string;
     difficulty: Difficulty;

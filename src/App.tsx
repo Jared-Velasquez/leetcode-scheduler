@@ -55,7 +55,7 @@ function SplashScreen() {
     );
 }
 
-const TRANSITION_DURATION_MS = 1000;
+const TRANSITION_DURATION_MS = 500;
 
 function App() {
     const [dbReady, setDbReady] = useState(false);
@@ -107,7 +107,7 @@ function App() {
 
             {/* Splash Screen */}
             {showSplashScreen && (
-                <div className={splashScreenClasses}>
+                <div className={splashScreenClasses} style={{ pointerEvents: dbReady ? "none" : "auto" }}>
                     <SplashScreen />
                 </div>
             )}

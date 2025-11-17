@@ -1,3 +1,4 @@
+import { ProblemQueue } from "@/components/dashboard/problem-queue/ProblemQueue";
 import { QuestionCompletionCard } from "@/components/dashboard/question-completion-card/QuestionCompletionCard";
 import { TrackerGraph } from "@/components/dashboard/tracker-graph/TrackerGraph";
 
@@ -10,6 +11,7 @@ export function HomePage() {
                 <QuestionCompletionCard difficultyType="HARD" uniqueCompleted={2} totalCompleted={9} />
             </div>
             <TrackerGraph />
+            <ProblemQueue />
         </div>
     );
 }
