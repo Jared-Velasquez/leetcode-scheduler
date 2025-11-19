@@ -17,7 +17,6 @@ const MIGRATIONS: Migration[] = [
 
       CREATE TABLE IF NOT EXISTS question (
         id              INTEGER PRIMARY KEY AUTOINCREMENT,
-        slug            TEXT NOT NULL UNIQUE,
         title           TEXT NOT NULL,
         difficulty      TEXT NOT NULL CHECK (difficulty IN ('EASY','MEDIUM','HARD')),
         url             TEXT,
@@ -32,24 +31,23 @@ const MIGRATIONS: Migration[] = [
         id              INTEGER PRIMARY KEY AUTOINCREMENT,
         question_id     INTEGER NOT NULL REFERENCES question(id) ON DELETE CASCADE,
         attempt_number  INTEGER NOT NULL,
-        status          TEXT NOT NULL CHECK (
-                          status IN ('PASSED','FAILED','PARTIAL','SKIPPED')
-                        ),
         language        TEXT,
-        time_ms         INTEGER,
-        memory_kb       INTEGER,
         source_code     TEXT,
         notes           TEXT,
         created_at      TEXT NOT NULL DEFAULT (datetime('now')),
         UNIQUE(question_id, attempt_number)
       );
 
+      CREATE TABLE IF NOT EXISTS topics (
+        id      INTEGER PRIMARY KEY AUTOINCREMENT,
+        question_id INTEGER NOT NULL REFERENCES question(id) ON DELETE CASCADE,
+        topic   TEXT NOT NULL
+      );
+
       CREATE INDEX IF NOT EXISTS idx_attempt_question_created_at
         ON attempt(question_id, created_at DESC);
     `,
-    },
-
-    // TODO: add future migrations here
+    }
 ];
 
 export async function runMigrations(db: Database): Promise<void> {
