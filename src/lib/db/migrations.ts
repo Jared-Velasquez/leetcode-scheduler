@@ -8,7 +8,7 @@ type Migration = {
 const MIGRATIONS: Migration[] = [
     {
         id: 1,
-        name: "create_question_and_attempt",
+        name: "create_question_and_problem_solve",
         sql: `
       CREATE TABLE IF NOT EXISTS schema_migrations (
         id   INTEGER PRIMARY KEY,
@@ -20,32 +20,30 @@ const MIGRATIONS: Migration[] = [
         title           TEXT NOT NULL,
         difficulty      TEXT NOT NULL CHECK (difficulty IN ('EASY','MEDIUM','HARD')),
         url             TEXT,
-        topics          TEXT,
-        is_favorited    INTEGER NOT NULL DEFAULT 0,
-        last_attempt_at TEXT,
+        last_solve_at TEXT,
         created_at      TEXT NOT NULL DEFAULT (datetime('now')),
         updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
       );
 
-      CREATE TABLE IF NOT EXISTS attempt (
+      CREATE TABLE IF NOT EXISTS problem_solve (
         id              INTEGER PRIMARY KEY AUTOINCREMENT,
         question_id     INTEGER NOT NULL REFERENCES question(id) ON DELETE CASCADE,
-        attempt_number  INTEGER NOT NULL,
+        solve_number  INTEGER NOT NULL,
         language        TEXT,
         source_code     TEXT,
         notes           TEXT,
         created_at      TEXT NOT NULL DEFAULT (datetime('now')),
-        UNIQUE(question_id, attempt_number)
+        UNIQUE(question_id, solve_number)
       );
 
       CREATE TABLE IF NOT EXISTS topics (
-        id      INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
         question_id INTEGER NOT NULL REFERENCES question(id) ON DELETE CASCADE,
-        topic   TEXT NOT NULL
+        topic       TEXT NOT NULL
       );
 
-      CREATE INDEX IF NOT EXISTS idx_attempt_question_created_at
-        ON attempt(question_id, created_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_problem_solve_question_created_at
+        ON problem_solve(question_id, created_at DESC);
     `,
     }
 ];

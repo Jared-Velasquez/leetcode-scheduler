@@ -22,49 +22,49 @@ interface ChartDataPoint {
     date: string;
     easy: {
         uniqueSolved: number;
-        successfulAttempts: number;
+        numSolves: number;
     };
     medium: {
         uniqueSolved: number;
-        successfulAttempts: number;
+        numSolves: number;
     };
     hard: {
         uniqueSolved: number;
-        successfulAttempts: number;
+        numSolves: number;
     }
 }
 
 const chartData: ChartDataPoint[] = [
-    { date: "2025-10-18", easy: { uniqueSolved: 1, successfulAttempts: 2 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-10-19", easy: { uniqueSolved: 0, successfulAttempts: 1 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-10-20", easy: { uniqueSolved: 1, successfulAttempts: 3 }, medium: { uniqueSolved: 1, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-10-21", easy: { uniqueSolved: 0, successfulAttempts: 2 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 1 } },
-    { date: "2025-10-22", easy: { uniqueSolved: 2, successfulAttempts: 3 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-10-23", easy: { uniqueSolved: 0, successfulAttempts: 2 }, medium: { uniqueSolved: 1, successfulAttempts: 2 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-10-24", easy: { uniqueSolved: 1, successfulAttempts: 4 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 1, successfulAttempts: 1 } },
-    { date: "2025-10-25", easy: { uniqueSolved: 0, successfulAttempts: 0 }, medium: { uniqueSolved: 0, successfulAttempts: 0 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-10-26", easy: { uniqueSolved: 1, successfulAttempts: 2 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-10-27", easy: { uniqueSolved: 0, successfulAttempts: 3 }, medium: { uniqueSolved: 1, successfulAttempts: 2 }, hard: { uniqueSolved: 0, successfulAttempts: 1 } },
-    { date: "2025-10-28", easy: { uniqueSolved: 2, successfulAttempts: 3 }, medium: { uniqueSolved: 0, successfulAttempts: 0 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-10-29", easy: { uniqueSolved: 0, successfulAttempts: 2 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-10-30", easy: { uniqueSolved: 1, successfulAttempts: 4 }, medium: { uniqueSolved: 1, successfulAttempts: 2 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-10-31", easy: { uniqueSolved: 0, successfulAttempts: 1 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-11-01", easy: { uniqueSolved: 1, successfulAttempts: 2 }, medium: { uniqueSolved: 0, successfulAttempts: 0 }, hard: { uniqueSolved: 1, successfulAttempts: 1 } },
-    { date: "2025-11-02", easy: { uniqueSolved: 0, successfulAttempts: 1 }, medium: { uniqueSolved: 0, successfulAttempts: 0 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-11-03", easy: { uniqueSolved: 2, successfulAttempts: 3 }, medium: { uniqueSolved: 1, successfulAttempts: 2 }, hard: { uniqueSolved: 0, successfulAttempts: 1 } },
-    { date: "2025-11-04", easy: { uniqueSolved: 0, successfulAttempts: 2 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-11-05", easy: { uniqueSolved: 1, successfulAttempts: 3 }, medium: { uniqueSolved: 0, successfulAttempts: 2 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-11-06", easy: { uniqueSolved: 0, successfulAttempts: 1 }, medium: { uniqueSolved: 0, successfulAttempts: 0 }, hard: { uniqueSolved: 0, successfulAttempts: 1 } },
-    { date: "2025-11-07", easy: { uniqueSolved: 1, successfulAttempts: 4 }, medium: { uniqueSolved: 1, successfulAttempts: 2 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-11-08", easy: { uniqueSolved: 0, successfulAttempts: 1 }, medium: { uniqueSolved: 0, successfulAttempts: 0 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-11-09", easy: { uniqueSolved: 1, successfulAttempts: 3 }, medium: { uniqueSolved: 1, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 1 } },
-    { date: "2025-11-10", easy: { uniqueSolved: 0, successfulAttempts: 2 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-11-11", easy: { uniqueSolved: 2, successfulAttempts: 3 }, medium: { uniqueSolved: 1, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-11-12", easy: { uniqueSolved: 0, successfulAttempts: 1 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-11-13", easy: { uniqueSolved: 1, successfulAttempts: 2 }, medium: { uniqueSolved: 1, successfulAttempts: 2 }, hard: { uniqueSolved: 0, successfulAttempts: 1 } },
-    { date: "2025-11-14", easy: { uniqueSolved: 0, successfulAttempts: 1 }, medium: { uniqueSolved: 0, successfulAttempts: 0 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-11-15", easy: { uniqueSolved: 1, successfulAttempts: 3 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
-    { date: "2025-11-16", easy: { uniqueSolved: 0, successfulAttempts: 2 }, medium: { uniqueSolved: 0, successfulAttempts: 1 }, hard: { uniqueSolved: 0, successfulAttempts: 0 } },
+    { date: "2025-10-18", easy: { uniqueSolved: 1, numSolves: 2 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-10-19", easy: { uniqueSolved: 0, numSolves: 1 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-10-20", easy: { uniqueSolved: 1, numSolves: 3 }, medium: { uniqueSolved: 1, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-10-21", easy: { uniqueSolved: 0, numSolves: 2 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 1 } },
+    { date: "2025-10-22", easy: { uniqueSolved: 2, numSolves: 3 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-10-23", easy: { uniqueSolved: 0, numSolves: 2 }, medium: { uniqueSolved: 1, numSolves: 2 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-10-24", easy: { uniqueSolved: 1, numSolves: 4 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 1, numSolves: 1 } },
+    { date: "2025-10-25", easy: { uniqueSolved: 0, numSolves: 0 }, medium: { uniqueSolved: 0, numSolves: 0 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-10-26", easy: { uniqueSolved: 1, numSolves: 2 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-10-27", easy: { uniqueSolved: 0, numSolves: 3 }, medium: { uniqueSolved: 1, numSolves: 2 }, hard: { uniqueSolved: 0, numSolves: 1 } },
+    { date: "2025-10-28", easy: { uniqueSolved: 2, numSolves: 3 }, medium: { uniqueSolved: 0, numSolves: 0 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-10-29", easy: { uniqueSolved: 0, numSolves: 2 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-10-30", easy: { uniqueSolved: 1, numSolves: 4 }, medium: { uniqueSolved: 1, numSolves: 2 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-10-31", easy: { uniqueSolved: 0, numSolves: 1 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-11-01", easy: { uniqueSolved: 1, numSolves: 2 }, medium: { uniqueSolved: 0, numSolves: 0 }, hard: { uniqueSolved: 1, numSolves: 1 } },
+    { date: "2025-11-02", easy: { uniqueSolved: 0, numSolves: 1 }, medium: { uniqueSolved: 0, numSolves: 0 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-11-03", easy: { uniqueSolved: 2, numSolves: 3 }, medium: { uniqueSolved: 1, numSolves: 2 }, hard: { uniqueSolved: 0, numSolves: 1 } },
+    { date: "2025-11-04", easy: { uniqueSolved: 0, numSolves: 2 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-11-05", easy: { uniqueSolved: 1, numSolves: 3 }, medium: { uniqueSolved: 0, numSolves: 2 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-11-06", easy: { uniqueSolved: 0, numSolves: 1 }, medium: { uniqueSolved: 0, numSolves: 0 }, hard: { uniqueSolved: 0, numSolves: 1 } },
+    { date: "2025-11-07", easy: { uniqueSolved: 1, numSolves: 4 }, medium: { uniqueSolved: 1, numSolves: 2 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-11-08", easy: { uniqueSolved: 0, numSolves: 1 }, medium: { uniqueSolved: 0, numSolves: 0 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-11-09", easy: { uniqueSolved: 1, numSolves: 3 }, medium: { uniqueSolved: 1, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 1 } },
+    { date: "2025-11-10", easy: { uniqueSolved: 0, numSolves: 2 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-11-11", easy: { uniqueSolved: 2, numSolves: 3 }, medium: { uniqueSolved: 1, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-11-12", easy: { uniqueSolved: 0, numSolves: 1 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-11-13", easy: { uniqueSolved: 1, numSolves: 2 }, medium: { uniqueSolved: 1, numSolves: 2 }, hard: { uniqueSolved: 0, numSolves: 1 } },
+    { date: "2025-11-14", easy: { uniqueSolved: 0, numSolves: 1 }, medium: { uniqueSolved: 0, numSolves: 0 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-11-15", easy: { uniqueSolved: 1, numSolves: 3 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
+    { date: "2025-11-16", easy: { uniqueSolved: 0, numSolves: 2 }, medium: { uniqueSolved: 0, numSolves: 1 }, hard: { uniqueSolved: 0, numSolves: 0 } },
 ];
 
 
@@ -90,8 +90,8 @@ const chartConfig = {
 export function TrackerGraph() {
     // Type: "7d" | "30d" | "90d"
     const [timeRange, setTimeRange] = useState<"7d" | "30d" | "90d">("90d");
-    // Type: "uniqueSolved" | "successfulAttempts"
-    const [chartMetric, setChartMetric] = useState<"uniqueSolved" | "successfulAttempts">("uniqueSolved");
+    // Type: "uniqueSolved" | "numSolves"
+    const [chartMetric, setChartMetric] = useState<"uniqueSolved" | "numSolves">("uniqueSolved");
 
     // First filter by time range
     const filteredByTime = chartData.filter((item) => {
@@ -141,7 +141,7 @@ export function TrackerGraph() {
                 </Select>
 
                 {/* Select chart metric */}
-                <Select value={chartMetric} onValueChange={(value: string) => setChartMetric(value as "uniqueSolved" | "successfulAttempts")}>
+                <Select value={chartMetric} onValueChange={(value: string) => setChartMetric(value as "uniqueSolved" | "numSolves")}>
                     <SelectTrigger className="hidden w-[160px] rounded-lg sm:ml-auto sm:flex" aria-label="Select chart metric">
                         <SelectValue placeholder="Unique Solved" />
                     </SelectTrigger>
@@ -149,8 +149,8 @@ export function TrackerGraph() {
                         <SelectItem value="uniqueSolved" className="rounded-lg">
                             Unique Solved
                         </SelectItem>
-                        <SelectItem value="successfulAttempts" className="rounded-lg">
-                            Successful Attempts
+                        <SelectItem value="numSolves" className="rounded-lg">
+                            Number Solved
                         </SelectItem>
                     </SelectContent>
                 </Select>

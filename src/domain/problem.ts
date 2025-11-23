@@ -5,7 +5,7 @@ export type Difficulty = "EASY" | "MEDIUM" | "HARD";
 export interface Problem {
     id: number;
     title: string;
-    url: Url;
+    url: string;
     difficulty: Difficulty;
-    tags: string[];
+    topics: string[];
 }

@@ -32,7 +32,7 @@ import {
     TableHeader,
     TableRow
 } from "@/components/ui/table";
-import { Difficulty } from "@/lib/db/types";
+import { Difficulty } from "@/domain/problem";
 import { Shapes, Zap, Flame } from "lucide-react";
 import { useState } from "react";
 
@@ -41,8 +41,8 @@ export type Problem = {
     title: string
     url: URL
     difficulty: Difficulty
-    lastAttemptAt: Date
-    nextAttemptAt: Date
+    lastSolveAt: Date
+    nextSolveAt: Date
 }
 
 export const sampleProblems: Problem[] = [
@@ -51,32 +51,32 @@ export const sampleProblems: Problem[] = [
         title: "Two Sum",
         url: new URL("https://leetcode.com/problems/two-sum"),
         difficulty: "EASY",
-        lastAttemptAt: new Date("2025-11-12"),
-        nextAttemptAt: new Date("2025-11-15"),
+        lastSolveAt: new Date("2025-11-12"),
+        nextSolveAt: new Date("2025-11-15"),
     },
     {
         id: 2,
         title: "Valid Parentheses",
         url: new URL("https://leetcode.com/problems/valid-parentheses"),
         difficulty: "EASY",
-        lastAttemptAt: new Date("2025-11-10"),
-        nextAttemptAt: new Date("2025-11-14"),
+        lastSolveAt: new Date("2025-11-10"),
+        nextSolveAt: new Date("2025-11-14"),
     },
     {
         id: 3,
         title: "Merge Two Sorted Lists",
         url: new URL("https://leetcode.com/problems/merge-two-sorted-lists"),
         difficulty: "EASY",
-        lastAttemptAt: new Date("2025-11-08"),
-        nextAttemptAt: new Date("2025-11-12"),
+        lastSolveAt: new Date("2025-11-08"),
+        nextSolveAt: new Date("2025-11-12"),
     },
     {
         id: 4,
         title: "Best Time to Buy and Sell Stock",
         url: new URL("https://leetcode.com/problems/best-time-to-buy-and-sell-stock"),
         difficulty: "EASY",
-        lastAttemptAt: new Date("2025-10-30"),
-        nextAttemptAt: new Date("2025-11-05"),
+        lastSolveAt: new Date("2025-10-30"),
+        nextSolveAt: new Date("2025-11-05"),
     },
 
     {
@@ -84,32 +84,32 @@ export const sampleProblems: Problem[] = [
         title: "Add Two Numbers",
         url: new URL("https://leetcode.com/problems/add-two-numbers"),
         difficulty: "MEDIUM",
-        lastAttemptAt: new Date("2025-11-14"),
-        nextAttemptAt: new Date("2025-11-20"),
+        lastSolveAt: new Date("2025-11-14"),
+        nextSolveAt: new Date("2025-11-20"),
     },
     {
         id: 6,
         title: "Longest Substring Without Repeating Characters",
         url: new URL("https://leetcode.com/problems/longest-substring-without-repeating-characters"),
         difficulty: "MEDIUM",
-        lastAttemptAt: new Date("2025-11-11"),
-        nextAttemptAt: new Date("2025-11-18"),
+        lastSolveAt: new Date("2025-11-11"),
+        nextSolveAt: new Date("2025-11-18"),
     },
     {
         id: 7,
         title: "Container With Most Water",
         url: new URL("https://leetcode.com/problems/container-with-most-water"),
         difficulty: "MEDIUM",
-        lastAttemptAt: new Date("2025-11-01"),
-        nextAttemptAt: new Date("2025-11-10"),
+        lastSolveAt: new Date("2025-11-01"),
+        nextSolveAt: new Date("2025-11-10"),
     },
     {
         id: 8,
         title: "3Sum",
         url: new URL("https://leetcode.com/problems/3sum"),
         difficulty: "MEDIUM",
-        lastAttemptAt: new Date("2025-10-28"),
-        nextAttemptAt: new Date("2025-11-08"),
+        lastSolveAt: new Date("2025-10-28"),
+        nextSolveAt: new Date("2025-11-08"),
     },
 
     {
@@ -117,32 +117,32 @@ export const sampleProblems: Problem[] = [
         title: "Median of Two Sorted Arrays",
         url: new URL("https://leetcode.com/problems/median-of-two-sorted-arrays"),
         difficulty: "HARD",
-        lastAttemptAt: new Date("2025-11-13"),
-        nextAttemptAt: new Date("2025-11-26"),
+        lastSolveAt: new Date("2025-11-13"),
+        nextSolveAt: new Date("2025-11-26"),
     },
     {
         id: 10,
         title: "Regular Expression Matching",
         url: new URL("https://leetcode.com/problems/regular-expression-matching"),
         difficulty: "HARD",
-        lastAttemptAt: new Date("2025-11-03"),
-        nextAttemptAt: new Date("2025-11-18"),
+        lastSolveAt: new Date("2025-11-03"),
+        nextSolveAt: new Date("2025-11-18"),
     },
     {
         id: 11,
         title: "Trapping Rain Water",
         url: new URL("https://leetcode.com/problems/trapping-rain-water"),
         difficulty: "HARD",
-        lastAttemptAt: new Date("2025-10-25"),
-        nextAttemptAt: new Date("2025-11-15"),
+        lastSolveAt: new Date("2025-10-25"),
+        nextSolveAt: new Date("2025-11-15"),
     },
     {
         id: 12,
         title: "First Missing Positive",
         url: new URL("https://leetcode.com/problems/first-missing-positive"),
         difficulty: "HARD",
-        lastAttemptAt: new Date("2025-10-29"),
-        nextAttemptAt: new Date("2025-11-12"),
+        lastSolveAt: new Date("2025-10-29"),
+        nextSolveAt: new Date("2025-11-12"),
     },
 
     {
@@ -150,32 +150,32 @@ export const sampleProblems: Problem[] = [
         title: "Climbing Stairs",
         url: new URL("https://leetcode.com/problems/climbing-stairs"),
         difficulty: "EASY",
-        lastAttemptAt: new Date("2025-11-09"),
-        nextAttemptAt: new Date("2025-11-13"),
+        lastSolveAt: new Date("2025-11-09"),
+        nextSolveAt: new Date("2025-11-13"),
     },
     {
         id: 14,
         title: "Binary Tree Level Order Traversal",
         url: new URL("https://leetcode.com/problems/binary-tree-level-order-traversal"),
         difficulty: "MEDIUM",
-        lastAttemptAt: new Date("2025-11-07"),
-        nextAttemptAt: new Date("2025-11-15"),
+        lastSolveAt: new Date("2025-11-07"),
+        nextSolveAt: new Date("2025-11-15"),
     },
     {
         id: 15,
         title: "Course Schedule",
         url: new URL("https://leetcode.com/problems/course-schedule"),
         difficulty: "MEDIUM",
-        lastAttemptAt: new Date("2025-10-27"),
-        nextAttemptAt: new Date("2025-11-04"),
+        lastSolveAt: new Date("2025-10-27"),
+        nextSolveAt: new Date("2025-11-04"),
     },
     {
         id: 16,
         title: "Word Ladder",
         url: new URL("https://leetcode.com/problems/word-ladder"),
         difficulty: "HARD",
-        lastAttemptAt: new Date("2025-11-05"),
-        nextAttemptAt: new Date("2025-11-19"),
+        lastSolveAt: new Date("2025-11-05"),
+        nextSolveAt: new Date("2025-11-19"),
     },
 
     {
@@ -183,32 +183,32 @@ export const sampleProblems: Problem[] = [
         title: "Invert Binary Tree",
         url: new URL("https://leetcode.com/problems/invert-binary-tree"),
         difficulty: "EASY",
-        lastAttemptAt: new Date("2025-11-15"),
-        nextAttemptAt: new Date("2025-11-18"),
+        lastSolveAt: new Date("2025-11-15"),
+        nextSolveAt: new Date("2025-11-18"),
     },
     {
         id: 18,
         title: "Kth Largest Element in an Array",
         url: new URL("https://leetcode.com/problems/kth-largest-element-in-an-array"),
         difficulty: "MEDIUM",
-        lastAttemptAt: new Date("2025-11-02"),
-        nextAttemptAt: new Date("2025-11-11"),
+        lastSolveAt: new Date("2025-11-02"),
+        nextSolveAt: new Date("2025-11-11"),
     },
     {
         id: 19,
         title: "Maximal Rectangle",
         url: new URL("https://leetcode.com/problems/maximal-rectangle"),
         difficulty: "HARD",
-        lastAttemptAt: new Date("2025-11-06"),
-        nextAttemptAt: new Date("2025-11-22"),
+        lastSolveAt: new Date("2025-11-06"),
+        nextSolveAt: new Date("2025-11-22"),
     },
     {
         id: 20,
         title: "LRU Cache",
         url: new URL("https://leetcode.com/problems/lru-cache"),
         difficulty: "MEDIUM",
-        lastAttemptAt: new Date("2025-10-31"),
-        nextAttemptAt: new Date("2025-11-09"),
+        lastSolveAt: new Date("2025-10-31"),
+        nextSolveAt: new Date("2025-11-09"),
     },
 ];
 
@@ -280,11 +280,11 @@ export const columns: ColumnDef<Problem>[] = [
         )
     },
     {
-        accessorKey: "lastAttemptAt",
-        header: "Last Attempt",
+        accessorKey: "lastSolveAt",
+        header: "Last Solve",
         cell: ({ row }) => (
             <span>
-                {row.original.lastAttemptAt.toLocaleDateString(undefined, {
+                {row.original.lastSolveAt.toLocaleDateString(undefined, {
                     year: "numeric",
                     month: "short",
                     day: "numeric"
@@ -293,11 +293,11 @@ export const columns: ColumnDef<Problem>[] = [
         )
     },
     {
-        accessorKey: "nextAttemptAt",
-        header: "Next Attempt",
+        accessorKey: "nextSolveAt",
+        header: "Next Solve",
         cell: ({ row }) => (
             <span>
-                {row.original.nextAttemptAt.toLocaleDateString(undefined, {
+                {row.original.nextSolveAt.toLocaleDateString(undefined, {
                     year: "numeric",
                     month: "short",
                     day: "numeric"

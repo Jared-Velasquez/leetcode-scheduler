@@ -7,7 +7,7 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card";
-import { Difficulty } from "@/lib/db/types";
+import { Difficulty } from "@/domain/problem";
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp } from "lucide-react";
 
@@ -48,7 +48,7 @@ export function QuestionCompletionCard({ difficultyType, uniqueCompleted, totalC
                     You've uniquely completed{" "}
                     <span className="font-medium">{uniqueCompleted}</span>{" "}
                     {difficultyType.toLowerCase()} questions out of{" "}
-                    <span className="font-medium">{totalCompleted}</span> successful attempts.
+                    <span className="font-medium">{totalCompleted}</span> successful submissions.
                 </p>
             </CardFooter>
         </Card>
