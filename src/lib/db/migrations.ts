@@ -15,35 +15,34 @@ const MIGRATIONS: Migration[] = [
         name TEXT NOT NULL UNIQUE
       );
 
-      CREATE TABLE IF NOT EXISTS question (
-        id              INTEGER PRIMARY KEY AUTOINCREMENT,
+      CREATE TABLE IF NOT EXISTS problems (
+        id              INTEGER PRIMARY KEY,
         title           TEXT NOT NULL,
         difficulty      TEXT NOT NULL CHECK (difficulty IN ('EASY','MEDIUM','HARD')),
         url             TEXT,
-        last_solve_at TEXT,
         created_at      TEXT NOT NULL DEFAULT (datetime('now')),
         updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
       );
 
-      CREATE TABLE IF NOT EXISTS problem_solve (
+      CREATE TABLE IF NOT EXISTS problem_solves (
         id              INTEGER PRIMARY KEY AUTOINCREMENT,
-        question_id     INTEGER NOT NULL REFERENCES question(id) ON DELETE CASCADE,
+        problem_id     INTEGER NOT NULL REFERENCES problems(id) ON DELETE CASCADE,
         solve_number  INTEGER NOT NULL,
         language        TEXT,
         source_code     TEXT,
         notes           TEXT,
         created_at      TEXT NOT NULL DEFAULT (datetime('now')),
-        UNIQUE(question_id, solve_number)
+        UNIQUE(problem_id, solve_number)
       );
 
       CREATE TABLE IF NOT EXISTS topics (
         id          INTEGER PRIMARY KEY AUTOINCREMENT,
-        question_id INTEGER NOT NULL REFERENCES question(id) ON DELETE CASCADE,
+        problem_id INTEGER NOT NULL REFERENCES problems(id) ON DELETE CASCADE,
         topic       TEXT NOT NULL
       );
 
-      CREATE INDEX IF NOT EXISTS idx_problem_solve_question_created_at
-        ON problem_solve(question_id, created_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_problem_solve_problem_created_at
+        ON problem_solves(problem_id, created_at DESC);
     `,
     }
 ];

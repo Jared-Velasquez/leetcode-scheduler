@@ -31,5 +31,14 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "sql": {
+      "default": {
+        "db-name": "leetcode_scheduler.db",
+        "db-path": "$APP_LOCAL_DATA_DIR/leetcode_scheduler/leetcode_scheduler.db"
+      },
+      "permissions": ["sql:allow-execute", "sql:allow-read"]
+    }
   }
 }
