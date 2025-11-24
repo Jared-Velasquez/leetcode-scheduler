@@ -10,40 +10,48 @@ const MIGRATIONS: Migration[] = [
         id: 1,
         name: "create_question_and_problem_solve",
         sql: `
-      CREATE TABLE IF NOT EXISTS schema_migrations (
-        id   INTEGER PRIMARY KEY,
-        name TEXT NOT NULL UNIQUE
-      );
+        CREATE TABLE IF NOT EXISTS schema_migrations (
+            id   INTEGER PRIMARY KEY,
+            name TEXT NOT NULL UNIQUE
+        );
 
-      CREATE TABLE IF NOT EXISTS problems (
-        id              INTEGER PRIMARY KEY,
-        title           TEXT NOT NULL,
-        difficulty      TEXT NOT NULL CHECK (difficulty IN ('EASY','MEDIUM','HARD')),
-        url             TEXT,
-        created_at      TEXT NOT NULL DEFAULT (datetime('now')),
-        updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
-      );
+        CREATE TABLE IF NOT EXISTS problems (
+            id              INTEGER PRIMARY KEY,
+            title           TEXT NOT NULL,
+            difficulty      TEXT NOT NULL CHECK (difficulty IN ('EASY','MEDIUM','HARD')),
+            url             TEXT,
+            created_at      TEXT NOT NULL DEFAULT (datetime('now')),
+            updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
+        );
 
-      CREATE TABLE IF NOT EXISTS problem_solves (
-        id              INTEGER PRIMARY KEY AUTOINCREMENT,
-        problem_id     INTEGER NOT NULL REFERENCES problems(id) ON DELETE CASCADE,
-        solve_number  INTEGER NOT NULL,
-        language        TEXT,
-        source_code     TEXT,
-        notes           TEXT,
-        created_at      TEXT NOT NULL DEFAULT (datetime('now')),
-        UNIQUE(problem_id, solve_number)
-      );
+        CREATE TABLE IF NOT EXISTS problem_solves (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            problem_id     INTEGER NOT NULL REFERENCES problems(id) ON DELETE CASCADE,
+            solve_number  INTEGER NOT NULL,
+            language        TEXT,
+            source_code     TEXT,
+            notes           TEXT,
+            created_at      TEXT NOT NULL DEFAULT (datetime('now')),
+            UNIQUE(problem_id, solve_number)
+        );
 
-      CREATE TABLE IF NOT EXISTS topics (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
-        problem_id INTEGER NOT NULL REFERENCES problems(id) ON DELETE CASCADE,
-        topic       TEXT NOT NULL
-      );
+        CREATE TABLE IF NOT EXISTS topics (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            problem_id INTEGER NOT NULL REFERENCES problems(id) ON DELETE CASCADE,
+            topic       TEXT NOT NULL
+        );
 
-      CREATE INDEX IF NOT EXISTS idx_problem_solve_problem_created_at
-        ON problem_solves(problem_id, created_at DESC);
-    `,
+        CREATE INDEX IF NOT EXISTS idx_problem_solve_problem_created_at
+            ON problem_solves(problem_id, created_at DESC);
+        `,
+    },
+    { // Add "proficiency level" to problem_solves
+        id: 2,
+        name: "add_proficiency_level_to_problem_solves",
+        sql: `
+        ALTER TABLE problem_solves
+        ADD COLUMN proficiency_level INTEGER CHECK (proficiency_level BETWEEN 0 AND 5);
+        `,
     }
 ];
 
