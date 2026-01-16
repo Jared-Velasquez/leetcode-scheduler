@@ -1,36 +1,14 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Leetcode Scheduler
+### Overview
+This repository contains Leetcode Scheduler, a web app that acts as a "personal notebook" and a queue when completing Leetcode problems.
+This project was developed out of the idea of spaced repetition, a strategy to improve long-term memory by reviewing information at strategically
+increasing intervals.
 
-## Getting Started
+The main feature of Leetcode Scheduler is the "scheduling queue": after recording a solved Leetcode problem (along with date completed, Leetcode difficulty, and personal difficulty), Leetcode Scheduler will display a queue of upcoming problems you will need to re-solve (ordered by dates you need to complete them by) according to the SM-2 Spaced Repetition Algorithm. If you miss the date you need to re-solve a problem, this problem will be put on an "overdue queue".
 
-First, run the development server:
+Leetcode Scheduler also acts as a general notebook/database for Leetcode problems you solve (or intend to solve); problems are categorized by pattern (e.g. Stack, Dynamic Programming), and subpattern (e.g. Monotonic Stack, 0/1 Knapsack). Once a pattern is selected/queried, you can browse a database of your recorded problems (problems you have solved or intend to solve). 
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Each recorded problem is identified by their Leetcode problem number and contains a list of zero or more "solves". Each solve records an instance of your problem completion, including time complexity, space complexity, pseudocode, and any other notes about the problem.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Architecture
+For fast developer velocity, Leetcode Scheduler has a very simple architecture: NextJS for the frontend web app and Supabase for backend-as-a-service (BaaS).
