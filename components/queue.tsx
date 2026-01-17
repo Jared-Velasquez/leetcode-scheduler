@@ -275,7 +275,7 @@ function QueueTable({
   emptyMessage: string;
 }) {
   return (
-    <>
+    <div className="flex flex-col gap-4 xl:max-w-5xl mx-auto w-full">
       <div className="overflow-hidden rounded-lg border">
         <Table>
           <TableHeader className="bg-muted sticky top-0 z-10">
@@ -403,7 +403,7 @@ function QueueTable({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -433,7 +433,7 @@ export function DataTable({
       onValueChange={setActiveTab}
       className="w-full flex-col justify-start gap-6"
     >
-      <div className="flex items-center justify-between px-4 lg:px-6">
+      <div className="flex items-center justify-between px-4 lg:px-6 xl:px-0 xl:max-w-5xl mx-auto w-full">
         <Label htmlFor="view-selector" className="sr-only">
           View
         </Label>
