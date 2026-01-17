@@ -420,7 +420,10 @@ export function DataTable({
     [initialData],
   );
   const overdueData = React.useMemo(
-    () => initialData.filter((item) => item.days_left < 0),
+    () =>
+      initialData
+        .filter((item) => item.days_left < 0)
+        .sort((a, b) => a.due_date.getTime() - b.due_date.getTime()),
     [initialData],
   );
 

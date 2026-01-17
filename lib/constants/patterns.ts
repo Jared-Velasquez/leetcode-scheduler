@@ -1,11 +1,89 @@
+// Pattern IDs as const for type safety
+export const PatternId = {
+  ARRAYS: 'arrays',
+  TWO_POINTERS: 'two_pointers',
+  SLIDING_WINDOW: 'sliding_window',
+  STACK: 'stack',
+  BINARY_SEARCH: 'binary_search',
+  LINKED_LIST: 'linked_list',
+  TREES: 'trees',
+  GRAPHS: 'graphs',
+  DYNAMIC_PROGRAMMING: 'dynamic_programming',
+  BACKTRACKING: 'backtracking',
+  HEAP: 'heap',
+  GREEDY: 'greedy',
+  INTERVALS: 'intervals',
+  BIT_MANIPULATION: 'bit_manipulation',
+  TRIE: 'trie',
+  MATH: 'math',
+} as const;
+
+export type PatternIdType = (typeof PatternId)[keyof typeof PatternId];
+
+// Subpattern IDs as const for type safety
+export const SubpatternId = {
+  // Arrays & Hashing
+  PREFIX_SUM: 'prefix_sum',
+  KADANES: 'kadanes',
+  MATRIX: 'matrix',
+  // Two Pointers
+  OPPOSITE_ENDS: 'opposite_ends',
+  SAME_DIRECTION: 'same_direction',
+  // Sliding Window
+  FIXED_SIZE: 'fixed_size',
+  VARIABLE_SIZE: 'variable_size',
+  // Stack
+  MONOTONIC_STACK: 'monotonic_stack',
+  EXPRESSION_PARSING: 'expression_parsing',
+  PARENTHESES: 'parentheses',
+  // Binary Search
+  SEARCH_SPACE: 'search_space',
+  ROTATED_ARRAY: 'rotated_array',
+  // Linked List
+  FAST_SLOW: 'fast_slow',
+  REVERSAL: 'reversal',
+  // Trees
+  BINARY_TREE: 'binary_tree',
+  BST: 'bst',
+  SEGMENT_TREE: 'segment_tree',
+  FENWICK_TREE: 'fenwick_tree',
+  // Graphs
+  BFS: 'bfs',
+  DFS: 'dfs',
+  DIJKSTRA: 'dijkstra',
+  UNION_FIND: 'union_find',
+  TOPOLOGICAL_SORT: 'topological_sort',
+  // Dynamic Programming
+  KNAPSACK_01: 'knapsack_01',
+  KNAPSACK_UNBOUNDED: 'knapsack_unbounded',
+  LCS: 'lcs',
+  LIS: 'lis',
+  MATRIX_DP: 'matrix_dp',
+  STATE_MACHINE: 'state_machine',
+  INTERVAL_DP: 'interval_dp',
+  // Backtracking
+  PERMUTATIONS: 'permutations',
+  COMBINATIONS: 'combinations',
+  SUBSETS: 'subsets',
+  // Heap
+  TOP_K: 'top_k',
+  MERGE_K: 'merge_k',
+  TWO_HEAPS: 'two_heaps',
+  // Intervals
+  MERGE_INTERVALS: 'merge_intervals',
+  INSERT_INTERVAL: 'insert_interval',
+} as const;
+
+export type SubpatternIdType = (typeof SubpatternId)[keyof typeof SubpatternId];
+
 export interface PatternDefinition {
-  id: string;
+  id: PatternIdType;
   label: string;
   subpatterns: SubpatternDefinition[];
 }
 
 export interface SubpatternDefinition {
-  id: string;
+  id: SubpatternIdType;
   label: string;
 }
 
@@ -142,24 +220,34 @@ export const PATTERNS: PatternDefinition[] = [
   },
 ];
 
-export function getPatternById(id: string): PatternDefinition | undefined {
+export function getPatternById(
+  id: PatternIdType | string
+): PatternDefinition | undefined {
   return PATTERNS.find((p) => p.id === id);
 }
 
 export function getSubpatternsForPattern(
-  patternId: string
+  patternId: PatternIdType | string
 ): SubpatternDefinition[] {
   return getPatternById(patternId)?.subpatterns ?? [];
 }
 
-export function getAllPatternIds(): string[] {
+export function getAllPatternIds(): PatternIdType[] {
   return PATTERNS.map((p) => p.id);
 }
 
 export function isValidSubpattern(
-  patternId: string,
-  subpatternId: string
+  patternId: PatternIdType | string,
+  subpatternId: SubpatternIdType | string
 ): boolean {
   const subpatterns = getSubpatternsForPattern(patternId);
   return subpatterns.some((s) => s.id === subpatternId);
+}
+
+export function isValidPatternId(id: string): id is PatternIdType {
+  return Object.values(PatternId).includes(id as PatternIdType);
+}
+
+export function isValidSubpatternId(id: string): id is SubpatternIdType {
+  return Object.values(SubpatternId).includes(id as SubpatternIdType);
 }
