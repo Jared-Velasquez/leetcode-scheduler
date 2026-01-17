@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/item";
 import React from "react";
 import { ChevronRightIcon } from "lucide-react";
+import Link from "next/link";
 
 export function Patterns() {
   return (
@@ -17,23 +18,25 @@ export function Patterns() {
       <ItemGroup>
         {PATTERNS.map((pattern, index) => (
           <React.Fragment key={pattern.id}>
-            <Item>
-              <ItemContent className="gap-1">
-                <ItemTitle className="text-lg font-semibold">
-                  {pattern.label}
-                </ItemTitle>
-                {/* If item has subpatterns, include them in the ItemDescription */}
-                {pattern.subpatterns.length > 0 && (
-                  <ItemDescription>
-                    Sub:{" "}
-                    {pattern.subpatterns.map((sub) => sub.label).join(", ")}
-                  </ItemDescription>
-                )}
-              </ItemContent>
-              <ItemActions>
-                <ChevronRightIcon className="size-4" />
-              </ItemActions>
-            </Item>
+            <Link href={`/problems?pattern=${pattern.id}`}>
+              <Item className="cursor-pointer hover:bg-muted/50 transition-colors">
+                <ItemContent className="gap-1">
+                  <ItemTitle className="text-lg font-semibold">
+                    {pattern.label}
+                  </ItemTitle>
+                  {/* If item has subpatterns, include them in the ItemDescription */}
+                  {pattern.subpatterns.length > 0 && (
+                    <ItemDescription>
+                      Sub:{" "}
+                      {pattern.subpatterns.map((sub) => sub.label).join(", ")}
+                    </ItemDescription>
+                  )}
+                </ItemContent>
+                <ItemActions>
+                  <ChevronRightIcon className="size-4" />
+                </ItemActions>
+              </Item>
+            </Link>
             {index !== PATTERNS.length - 1 && <ItemSeparator />}
           </React.Fragment>
         ))}
