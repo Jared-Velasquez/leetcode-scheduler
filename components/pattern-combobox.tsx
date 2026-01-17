@@ -126,6 +126,7 @@ export function PatternCombobox() {
 
   // Clear all selection
   const handleClear = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     updateSelection(null, null);
   };
@@ -154,10 +155,22 @@ export function PatternCombobox() {
           <span className="truncate">{getDisplayText()}</span>
           <div className="flex items-center gap-1">
             {selectedPattern && (
-              <X
-                className="size-4 shrink-0 opacity-50 hover:opacity-100"
+              <span
+                role="button"
+                tabIndex={0}
+                className="rounded-sm hover:bg-accent p-0.5"
                 onClick={handleClear}
-              />
+                onMouseDown={(e) => e.preventDefault()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    updateSelection(null, null);
+                  }
+                }}
+              >
+                <X className="size-4 shrink-0 opacity-50 hover:opacity-100" />
+              </span>
             )}
             <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
           </div>
