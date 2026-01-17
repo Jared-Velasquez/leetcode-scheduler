@@ -1,13 +1,21 @@
+import { createClient } from "@/lib/supabase/server";
+import { getQueueItems } from "@/services/queue.service";
 import { DataTable } from "@/components/queue";
 import { SectionCards } from "@/components/section-cards";
 
-import data from "./data.json";
+export default async function Page() {
+  const supabase = await createClient();
+  const queueItems = await getQueueItems(supabase);
 
-export default function Page() {
-  const transformedData = data.map((item) => ({
-    ...item,
-    difficulty: item.difficulty as "Easy" | "Medium" | "Hard",
-    due_date: new Date(item.due_date),
+  // Transform queue items to match the DataTable schema
+  const transformedData = queueItems.map((item) => ({
+    problem_id: item.problem.leetcodeNumber,
+    title: item.problem.title,
+    difficulty: (item.problem.leetcodeDifficulty.charAt(0).toUpperCase() +
+      item.problem.leetcodeDifficulty.slice(1)) as "Easy" | "Medium" | "Hard",
+    understanding: item.lastSolve?.personalDifficulty ?? 1,
+    due_date: item.nextReviewDate,
+    days_left: item.daysUntilDue,
   }));
 
   return (

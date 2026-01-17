@@ -64,12 +64,29 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   getPatternById,
+  PATTERNS,
   type PatternIdType,
 } from "@/lib/constants/patterns";
 import { RecordAttemptDialog } from "@/components/record-attempt-dialog";
+import {
+  updateProblemAction,
+  deleteProblemAction,
+} from "@/app/actions/problems";
+import { LeetcodeDifficulty } from "@/types";
 
 export const problemSchema = z.object({
+  _id: z.string(), // Internal UUID for mutations
   problem_id: z.number(),
   title: z.string(),
   difficulty: z.enum(["Easy", "Medium", "Hard"]),
@@ -282,11 +299,23 @@ const columns: ColumnDef<Problem>[] = [
 
 function ActionsCell({ problem }: { problem: Problem }) {
   const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [isDeleting, startDeleteTransition] = React.useTransition();
+
+  const handleDelete = () => {
+    startDeleteTransition(async () => {
+      const result = await deleteProblemAction(problem._id);
+      if (result.success) {
+        setDeleteDialogOpen(false);
+      }
+    });
+  };
 
   return (
     <div className="flex items-center gap-2">
       <RecordAttemptDialog
-        problem={problem}
+        problemId={problem._id}
+        problemTitle={problem.title}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
       />
@@ -313,11 +342,38 @@ function ActionsCell({ problem }: { problem: Problem }) {
               View on LeetCode
             </a>
           </DropdownMenuItem>
-          <DropdownMenuItem>Edit Problem</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => setDeleteDialogOpen(true)}
+          >
+            Delete
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Problem</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete &quot;{problem.title}&quot;? This
+              will also delete all associated solve attempts. This action cannot
+              be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -345,7 +401,7 @@ function useProblemsTable(data: Problem[]) {
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.problem_id.toString(),
+    getRowId: (row) => row._id,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -501,9 +557,49 @@ export function ProblemsTable({ data }: { data: Problem[] }) {
 
 function TableCellViewer({ item }: { item: Problem }) {
   const isMobile = useIsMobile();
+  const [isPending, startTransition] = React.useTransition();
+  const [error, setError] = React.useState<string | null>(null);
+  const [open, setOpen] = React.useState(false);
+
+  // Form state
+  const [title, setTitle] = React.useState(item.title);
+  const [difficulty, setDifficulty] = React.useState(item.difficulty);
+  const [pattern, setPattern] = React.useState(item.pattern ?? "");
+  const [subpattern, setSubpattern] = React.useState(item.subpattern ?? "");
+  const [url, setUrl] = React.useState(item.url);
+
+  // Get subpatterns for selected pattern
+  const selectedPattern = pattern ? getPatternById(pattern as PatternIdType) : null;
+  const availableSubpatterns = selectedPattern?.subpatterns ?? [];
+
+  // Reset subpattern when pattern changes
+  React.useEffect(() => {
+    if (pattern !== item.pattern) {
+      setSubpattern("");
+    }
+  }, [pattern, item.pattern]);
+
+  const handleSave = () => {
+    setError(null);
+    startTransition(async () => {
+      const result = await updateProblemAction(item._id, {
+        title,
+        leetcodeDifficulty: difficulty.toLowerCase() as LeetcodeDifficulty,
+        patternId: pattern || undefined,
+        subpatternId: subpattern || undefined,
+        url,
+      });
+
+      if (result.success) {
+        setOpen(false);
+      } else {
+        setError(result.error ?? "Failed to update problem");
+      }
+    });
+  };
 
   return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
+    <Drawer direction={isMobile ? "bottom" : "right"} open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button variant="link" className="text-foreground w-fit px-0 text-left">
           {item.title}
@@ -515,15 +611,29 @@ function TableCellViewer({ item }: { item: Problem }) {
           <DrawerDescription>Problem #{item.problem_id}</DrawerDescription>
         </DrawerHeader>
         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+          {error && (
+            <div className="text-sm text-red-500 bg-red-50 dark:bg-red-950 p-2 rounded">
+              {error}
+            </div>
+          )}
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
               <Label htmlFor="title">Title</Label>
-              <Input id="title" defaultValue={item.title} />
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                disabled={isPending}
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="difficulty">Difficulty</Label>
-                <Select defaultValue={item.difficulty}>
+                <Select
+                  value={difficulty}
+                  onValueChange={(v) => setDifficulty(v as "Easy" | "Medium" | "Hard")}
+                  disabled={isPending}
+                >
                   <SelectTrigger id="difficulty" className="w-full">
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
@@ -536,18 +646,49 @@ function TableCellViewer({ item }: { item: Problem }) {
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="understanding">Understanding (1-5)</Label>
+                <Input
+                  id="understanding"
+                  value={item.understanding ?? "Not attempted"}
+                  disabled
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="pattern">Pattern</Label>
                 <Select
-                  defaultValue={item.understanding?.toString() ?? undefined}
+                  value={pattern}
+                  onValueChange={setPattern}
+                  disabled={isPending}
                 >
-                  <SelectTrigger id="understanding" className="w-full">
-                    <SelectValue placeholder="Not attempted" />
+                  <SelectTrigger id="pattern" className="w-full">
+                    <SelectValue placeholder="Select pattern" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">1</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                    <SelectItem value="4">4</SelectItem>
-                    <SelectItem value="5">5</SelectItem>
+                    {PATTERNS.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="subpattern">Subpattern</Label>
+                <Select
+                  value={subpattern}
+                  onValueChange={setSubpattern}
+                  disabled={isPending || availableSubpatterns.length === 0}
+                >
+                  <SelectTrigger id="subpattern" className="w-full">
+                    <SelectValue placeholder={availableSubpatterns.length === 0 ? "None" : "Select subpattern"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableSubpatterns.map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -557,22 +698,29 @@ function TableCellViewer({ item }: { item: Problem }) {
                 <Label htmlFor="time_complexity">Time Complexity</Label>
                 <Input
                   id="time_complexity"
-                  defaultValue={item.time_complexity ?? ""}
+                  value={item.time_complexity ?? ""}
                   placeholder="e.g., O(n)"
+                  disabled
                 />
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="space_complexity">Space Complexity</Label>
                 <Input
                   id="space_complexity"
-                  defaultValue={item.space_complexity ?? ""}
+                  value={item.space_complexity ?? ""}
                   placeholder="e.g., O(1)"
+                  disabled
                 />
               </div>
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="url">LeetCode URL</Label>
-              <Input id="url" defaultValue={item.url} />
+              <Input
+                id="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                disabled={isPending}
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
@@ -590,9 +738,13 @@ function TableCellViewer({ item }: { item: Problem }) {
           </form>
         </div>
         <DrawerFooter>
-          <Button>Save Changes</Button>
+          <Button onClick={handleSave} disabled={isPending}>
+            {isPending ? "Saving..." : "Save Changes"}
+          </Button>
           <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline" disabled={isPending}>
+              Cancel
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
