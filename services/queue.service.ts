@@ -66,8 +66,12 @@ function calculateNextReviewDate(latestSolve: Solve): Date {
 function mapDbToProblemWithSolves(db: DbProblemWithSolves): ProblemWithSolves {
   const solves = (db.solves || []).map(mapDbToSolve);
 
-  // Sort solves by date descending
-  solves.sort((a, b) => b.solvedAt.getTime() - a.solvedAt.getTime());
+  // Sort solves by date descending, then by created_at for same-day solves
+  solves.sort((a, b) => {
+    const dateCompare = b.solvedAt.getTime() - a.solvedAt.getTime();
+    if (dateCompare !== 0) return dateCompare;
+    return b.createdAt.getTime() - a.createdAt.getTime();
+  });
 
   const latestSolve = solves[0];
   let nextReviewDate: Date | undefined;

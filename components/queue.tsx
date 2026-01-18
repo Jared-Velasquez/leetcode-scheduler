@@ -154,7 +154,7 @@ const columns: ColumnDef<z.infer<typeof queueSchema>>[] = [
   },
   {
     accessorKey: "understanding",
-    header: "Understanding",
+    header: "Comfort",
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <div className="flex gap-0.5">
@@ -162,13 +162,13 @@ const columns: ColumnDef<z.infer<typeof queueSchema>>[] = [
             <div
               key={level}
               className={`h-2 w-2 rounded-full ${
-                level <= row.original.understanding ? "bg-primary" : "bg-muted"
+                level <= (6 - row.original.understanding) ? "bg-primary" : "bg-muted"
               }`}
             />
           ))}
         </div>
         <span className="text-muted-foreground text-xs">
-          {row.original.understanding}/5
+          {6 - row.original.understanding}/5
         </span>
       </div>
     ),
@@ -532,10 +532,10 @@ function TableCellViewer({ item }: { item: z.infer<typeof queueSchema> }) {
                 </Select>
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="understanding">Understanding (1-5)</Label>
+                <Label htmlFor="difficulty-rating">Difficulty (1-5)</Label>
                 <Select defaultValue={item.understanding.toString()}>
-                  <SelectTrigger id="understanding" className="w-full">
-                    <SelectValue placeholder="Select understanding" />
+                  <SelectTrigger id="difficulty-rating" className="w-full">
+                    <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="1">1</SelectItem>

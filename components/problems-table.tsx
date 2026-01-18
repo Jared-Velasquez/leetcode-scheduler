@@ -163,10 +163,13 @@ function formatRelativeDate(dateString: string | null): string {
   return `${Math.floor(diffDays / 365)} years ago`;
 }
 
-function UnderstandingDots({ value }: { value: number | null }) {
+function DifficultyDots({ value }: { value: number | null }) {
   if (value === null) {
     return <span className="text-muted-foreground">—</span>;
   }
+
+  // Invert the value: 1 (Trivial) shows 5 dots, 5 (Impossible) shows 1 dot
+  const invertedValue = 6 - value;
 
   return (
     <div className="flex items-center gap-2">
@@ -175,12 +178,12 @@ function UnderstandingDots({ value }: { value: number | null }) {
           <div
             key={level}
             className={`h-2 w-2 rounded-full ${
-              level <= value ? "bg-primary" : "bg-muted"
+              level <= invertedValue ? "bg-primary" : "bg-muted"
             }`}
           />
         ))}
       </div>
-      <span className="text-muted-foreground text-xs">{value}/5</span>
+      <span className="text-muted-foreground text-xs">{invertedValue}/5</span>
     </div>
   );
 }
@@ -244,8 +247,8 @@ const columns: ColumnDef<Problem>[] = [
   },
   {
     accessorKey: "understanding",
-    header: "Understanding",
-    cell: ({ row }) => <UnderstandingDots value={row.original.understanding} />,
+    header: "Comfort",
+    cell: ({ row }) => <DifficultyDots value={row.original.understanding} />,
   },
   {
     accessorKey: "time_complexity",
@@ -645,10 +648,10 @@ function TableCellViewer({ item }: { item: Problem }) {
                 </Select>
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="understanding">Understanding (1-5)</Label>
+                <Label htmlFor="comfort">Comfort Level</Label>
                 <Input
-                  id="understanding"
-                  value={item.understanding ?? "Not attempted"}
+                  id="comfort"
+                  value={item.understanding ? `${6 - item.understanding}/5` : "Not attempted"}
                   disabled
                 />
               </div>

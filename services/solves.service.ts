@@ -44,7 +44,8 @@ export async function getSolvesForProblem(
     .from('solves')
     .select('*')
     .eq('problem_id', problemId)
-    .order('solved_at', { ascending: false });
+    .order('solved_at', { ascending: false })
+    .order('created_at', { ascending: false });
 
   if (error) throw error;
   return (data as DbSolve[]).map(mapDbToSolve);
@@ -59,6 +60,7 @@ export async function getLatestSolveForProblem(
     .select('*')
     .eq('problem_id', problemId)
     .order('solved_at', { ascending: false })
+    .order('created_at', { ascending: false })
     .limit(1)
     .single();
 

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { recordSolveAction } from "@/app/actions/solves";
 import { PersonalDifficulty } from "@/types";
+import { PERSONAL_DIFFICULTIES } from "@/lib/constants/difficulties";
 
 interface RecordAttemptDialogProps {
   problemId: string;
@@ -117,7 +118,7 @@ export function RecordAttemptDialog({
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="attempt-understanding">
-                Understanding Rating (1-5) *
+                How difficult was this for you? *
               </Label>
               <Select
                 value={understanding}
@@ -125,14 +126,17 @@ export function RecordAttemptDialog({
                 disabled={isPending}
               >
                 <SelectTrigger id="attempt-understanding">
-                  <SelectValue placeholder="Select rating" />
+                  <SelectValue placeholder="Select difficulty" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">1 - No understanding</SelectItem>
-                  <SelectItem value="2">2 - Partial understanding</SelectItem>
-                  <SelectItem value="3">3 - Moderate understanding</SelectItem>
-                  <SelectItem value="4">4 - Good understanding</SelectItem>
-                  <SelectItem value="5">5 - Complete understanding</SelectItem>
+                  {PERSONAL_DIFFICULTIES.map((difficulty) => (
+                    <SelectItem
+                      key={difficulty.value}
+                      value={String(difficulty.value)}
+                    >
+                      {difficulty.label} - {difficulty.description}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
