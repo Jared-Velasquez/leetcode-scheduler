@@ -1,5 +1,7 @@
 "use client"
 
+import * as React from "react"
+import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,12 +19,56 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { PROVIDERS, signInWithProvider } from "@/lib/supabase/auth"
+import { PROVIDERS, signInWithProvider, signInWithEmail } from "@/lib/supabase/auth"
+import { loginSchema, type LoginInput } from "@/lib/validations/auth"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const router = useRouter()
+  const [isPending, startTransition] = React.useTransition()
+  const [error, setError] = React.useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = React.useState<Partial<Record<keyof LoginInput, string>>>({})
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setError(null)
+    setFieldErrors({})
+
+    const formData = new FormData(e.currentTarget)
+    const data = {
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    }
+
+    const result = loginSchema.safeParse(data)
+    if (!result.success) {
+      const errors: Partial<Record<keyof LoginInput, string>> = {}
+      result.error.issues.forEach((issue) => {
+        if (issue.path[0]) {
+          errors[issue.path[0] as keyof LoginInput] = issue.message
+        }
+      })
+      setFieldErrors(errors)
+      return
+    }
+
+    startTransition(async () => {
+      try {
+        await signInWithEmail(result.data.email, result.data.password)
+        router.push("/dashboard")
+        router.refresh()
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message)
+        } else {
+          setError("An unexpected error occurred")
+        }
+      }
+    })
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -33,12 +79,13 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <Button
                   variant="outline"
                   type="button"
+                  disabled={isPending}
                   onClick={() => signInWithProvider(PROVIDERS.github)}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 30 30">
@@ -49,6 +96,7 @@ export function LoginForm({
                 <Button
                   variant="outline"
                   type="button"
+                  disabled={isPending}
                   onClick={() => signInWithProvider(PROVIDERS.google)}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -63,29 +111,50 @@ export function LoginForm({
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
               </FieldSeparator>
+              {error && (
+                <div className="text-sm text-red-500 bg-red-50 dark:bg-red-950 p-3 rounded-md">
+                  {error}
+                </div>
+              )}
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
-                  required
+                  disabled={isPending}
+                  aria-invalid={!!fieldErrors.email}
                 />
+                {fieldErrors.email && (
+                  <p className="text-sm text-red-500">{fieldErrors.email}</p>
+                )}
               </Field>
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <a
-                    href="#"
+                    href="/forgot-password"
                     className="ml-auto text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  disabled={isPending}
+                  aria-invalid={!!fieldErrors.password}
+                />
+                {fieldErrors.password && (
+                  <p className="text-sm text-red-500">{fieldErrors.password}</p>
+                )}
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? "Signing in..." : "Login"}
+                </Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <a href="/signup">Sign up</a>
                 </FieldDescription>
@@ -94,10 +163,6 @@ export function LoginForm({
           </form>
         </CardContent>
       </Card>
-      {/* <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </FieldDescription> */}
-    </div >
+    </div>
   )
 }
