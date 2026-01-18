@@ -2,14 +2,11 @@
 
 import * as React from "react";
 import {
-  IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
   IconDotsVertical,
-  IconLayoutColumns,
-  IconPlus,
 } from "@tabler/icons-react";
 import {
   flexRender,
@@ -27,30 +24,17 @@ import {
 } from "@tanstack/react-table";
 import { z } from "zod";
 
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ProblemDrawer } from "@/components/problem-drawer";
 import {
   Select,
   SelectContent,
@@ -79,10 +63,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // });
 
 export const queueSchema = z.object({
+  _id: z.string(),
   problem_id: z.number(),
   title: z.string(),
   difficulty: z.enum(["Easy", "Medium", "Hard"]),
-  understanding: z.int().min(1).max(5),
+  pattern: z.string().nullable(),
+  subpattern: z.string().nullable(),
+  understanding: z.number().min(1).max(5),
+  time_complexity: z.string().nullable(),
+  space_complexity: z.string().nullable(),
+  last_attempted: z.string().nullable(),
+  total_attempts: z.number(),
+  url: z.string(),
   due_date: z.date(),
   days_left: z.number(),
 });
@@ -215,11 +207,8 @@ const columns: ColumnDef<z.infer<typeof queueSchema>>[] = [
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Mark Complete</DropdownMenuItem>
           <DropdownMenuItem>Reschedule</DropdownMenuItem>
           <DropdownMenuItem>View Problem</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Remove</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),
@@ -249,7 +238,7 @@ function useQueueTable(data: z.infer<typeof queueSchema>[]) {
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.problem_id.toString(),
+    getRowId: (row) => row._id,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -499,84 +488,5 @@ export function DataTable({
 }
 
 function TableCellViewer({ item }: { item: z.infer<typeof queueSchema> }) {
-  const isMobile = useIsMobile();
-
-  return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger asChild>
-        <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {item.title}
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="gap-1">
-          <DrawerTitle>{item.title}</DrawerTitle>
-          <DrawerDescription>Problem #{item.problem_id}</DrawerDescription>
-        </DrawerHeader>
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-          <form className="flex flex-col gap-4">
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" defaultValue={item.title} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="difficulty">Difficulty</Label>
-                <Select defaultValue={item.difficulty}>
-                  <SelectTrigger id="difficulty" className="w-full">
-                    <SelectValue placeholder="Select difficulty" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Easy">Easy</SelectItem>
-                    <SelectItem value="Medium">Medium</SelectItem>
-                    <SelectItem value="Hard">Hard</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="difficulty-rating">Difficulty (1-5)</Label>
-                <Select defaultValue={item.understanding.toString()}>
-                  <SelectTrigger id="difficulty-rating" className="w-full">
-                    <SelectValue placeholder="Select difficulty" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                    <SelectItem value="4">4</SelectItem>
-                    <SelectItem value="5">5</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="due_date">Due Date</Label>
-                <Input
-                  id="due_date"
-                  type="date"
-                  defaultValue={item.due_date.toISOString().split("T")[0]}
-                />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="days_left">Days Left</Label>
-                <Input
-                  id="days_left"
-                  type="number"
-                  defaultValue={item.days_left}
-                  disabled
-                />
-              </div>
-            </div>
-          </form>
-        </div>
-        <DrawerFooter>
-          <Button>Submit</Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Done</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
-  );
+  return <ProblemDrawer problem={item} />;
 }
