@@ -430,9 +430,9 @@ export function DataTable({
 }) {
   const [activeTab, setActiveTab] = React.useState("upcoming");
 
-  // Split data into upcoming and overdue queues
+  // Split data into upcoming (due within 7 days) and overdue queues
   const upcomingData = React.useMemo(
-    () => initialData.filter((item) => item.days_left >= 0),
+    () => initialData.filter((item) => item.days_left >= 0 && item.days_left < 7),
     [initialData],
   );
   const overdueData = React.useMemo(
@@ -500,7 +500,7 @@ export function DataTable({
         value="upcoming"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
-        <QueueTable table={upcomingTable} emptyMessage="No upcoming reviews." />
+        <QueueTable table={upcomingTable} emptyMessage="No reviews due in the next 7 days." />
       </TabsContent>
       <TabsContent
         value="overdue"
