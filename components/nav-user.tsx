@@ -29,7 +29,7 @@ export function NavUser() {
   const { isMobile } = useSidebar();
   const router = useRouter();
   const [user, setUser] = useState<{ name: string; email: string } | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -92,13 +92,6 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle />
-                Account
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <IconLogout />
