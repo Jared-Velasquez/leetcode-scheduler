@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   getPatternById,
   PATTERNS,
@@ -32,6 +33,7 @@ import {
 } from "@/lib/constants/patterns";
 import { updateProblemAction } from "@/app/actions/problems";
 import { LeetcodeDifficulty } from "@/types";
+import { SolveHistoryList } from "@/components/solve-history-list";
 
 function getDifficultyColor(difficulty: "Easy" | "Medium" | "Hard") {
   switch (difficulty) {
@@ -159,155 +161,170 @@ export function ProblemDrawer({
           <DrawerTitle>{problem.title}</DrawerTitle>
           <DrawerDescription>Problem #{problem.problem_id}</DrawerDescription>
         </DrawerHeader>
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-          {error && (
-            <div className="text-sm text-red-500 bg-red-50 dark:bg-red-950 p-2 rounded">
-              {error}
-            </div>
-          )}
-          <form className="flex flex-col gap-4">
-            {/* Read-only: Title */}
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" value={problem.title} disabled />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              {/* Read-only: Difficulty */}
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="difficulty">Difficulty</Label>
-                <div className="flex h-9 items-center">
-                  <Badge
-                    variant="outline"
-                    className={`px-2 ${getDifficultyColor(problem.difficulty)}`}
-                  >
-                    {problem.difficulty}
-                  </Badge>
+        <Tabs defaultValue="details" className="flex flex-col flex-1 overflow-hidden">
+          <div className="px-4">
+            <TabsList>
+              <TabsTrigger value="details">Details</TabsTrigger>
+              <TabsTrigger value="history">
+                History ({problem.total_attempts})
+              </TabsTrigger>
+            </TabsList>
+          </div>
+          <TabsContent value="details" className="flex-1 overflow-y-auto mt-0">
+            <div className="flex flex-col gap-4 px-4 text-sm">
+              {error && (
+                <div className="text-sm text-red-500 bg-red-50 dark:bg-red-950 p-2 rounded">
+                  {error}
                 </div>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="comfort">Comfort Level</Label>
-                <Input
-                  id="comfort"
-                  value={
-                    problem.understanding
-                      ? `${6 - problem.understanding}/5`
-                      : "Not attempted"
-                  }
-                  disabled
-                />
-              </div>
-            </div>
+              )}
+              <form className="flex flex-col gap-4">
+                {/* Read-only: Title */}
+                <div className="flex flex-col gap-3">
+                  <Label htmlFor="title">Title</Label>
+                  <Input id="title" value={problem.title} disabled />
+                </div>
 
-            {/* Editable: Pattern & Subpattern */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="pattern">Pattern</Label>
-                <Select
-                  value={pattern}
-                  onValueChange={setPattern}
-                  disabled={isPending}
-                >
-                  <SelectTrigger id="pattern" className="w-full">
-                    <SelectValue placeholder="Select pattern" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PATTERNS.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="subpattern">Subpattern</Label>
-                <Select
-                  value={subpattern}
-                  onValueChange={setSubpattern}
-                  disabled={isPending || availableSubpatterns.length === 0}
-                >
-                  <SelectTrigger id="subpattern" className="w-full">
-                    <SelectValue
-                      placeholder={
-                        availableSubpatterns.length === 0
-                          ? "None"
-                          : "Select subpattern"
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Read-only: Difficulty */}
+                  <div className="flex flex-col gap-3">
+                    <Label htmlFor="difficulty">Difficulty</Label>
+                    <div className="flex h-9 items-center">
+                      <Badge
+                        variant="outline"
+                        className={`px-2 ${getDifficultyColor(problem.difficulty)}`}
+                      >
+                        {problem.difficulty}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <Label htmlFor="comfort">Comfort Level</Label>
+                    <Input
+                      id="comfort"
+                      value={
+                        problem.understanding
+                          ? `${6 - problem.understanding}/5`
+                          : "Not attempted"
                       }
+                      disabled
                     />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableSubpatterns.map((s) => (
-                      <SelectItem key={s.id} value={s.id}>
-                        {s.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                  </div>
+                </div>
 
-            {/* Read-only: Complexity */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="time_complexity">Time Complexity</Label>
-                <Input
-                  id="time_complexity"
-                  value={problem.time_complexity ?? ""}
-                  placeholder="e.g., O(n)"
-                  disabled
-                />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="space_complexity">Space Complexity</Label>
-                <Input
-                  id="space_complexity"
-                  value={problem.space_complexity ?? ""}
-                  placeholder="e.g., O(1)"
-                  disabled
-                />
-              </div>
-            </div>
+                {/* Editable: Pattern & Subpattern */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-3">
+                    <Label htmlFor="pattern">Pattern</Label>
+                    <Select
+                      value={pattern}
+                      onValueChange={setPattern}
+                      disabled={isPending}
+                    >
+                      <SelectTrigger id="pattern" className="w-full">
+                        <SelectValue placeholder="Select pattern" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PATTERNS.map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <Label htmlFor="subpattern">Subpattern</Label>
+                    <Select
+                      value={subpattern}
+                      onValueChange={setSubpattern}
+                      disabled={isPending || availableSubpatterns.length === 0}
+                    >
+                      <SelectTrigger id="subpattern" className="w-full">
+                        <SelectValue
+                          placeholder={
+                            availableSubpatterns.length === 0
+                              ? "None"
+                              : "Select subpattern"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableSubpatterns.map((s) => (
+                          <SelectItem key={s.id} value={s.id}>
+                            {s.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-            {/* Read-only: LeetCode URL with link */}
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="url">LeetCode URL</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="url"
-                  value={problem.url}
-                  disabled
-                  className="flex-1"
-                />
-                <Button variant="outline" size="icon" asChild>
-                  <a
-                    href={problem.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <IconExternalLink className="size-4" />
-                    <span className="sr-only">Open on LeetCode</span>
-                  </a>
-                </Button>
-              </div>
-            </div>
+                {/* Read-only: Complexity */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-3">
+                    <Label htmlFor="time_complexity">Time Complexity</Label>
+                    <Input
+                      id="time_complexity"
+                      value={problem.time_complexity ?? ""}
+                      placeholder="e.g., O(n)"
+                      disabled
+                    />
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <Label htmlFor="space_complexity">Space Complexity</Label>
+                    <Input
+                      id="space_complexity"
+                      value={problem.space_complexity ?? ""}
+                      placeholder="e.g., O(1)"
+                      disabled
+                    />
+                  </div>
+                </div>
 
-            {/* Read-only: Attempts and Last Attempted */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label>Total Attempts</Label>
-                <Input value={problem.total_attempts} disabled />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label>Last Attempted</Label>
-                <Input
-                  value={formatRelativeDate(problem.last_attempted)}
-                  disabled
-                />
-              </div>
+                {/* Read-only: LeetCode URL with link */}
+                <div className="flex flex-col gap-3">
+                  <Label htmlFor="url">LeetCode URL</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="url"
+                      value={problem.url}
+                      disabled
+                      className="flex-1"
+                    />
+                    <Button variant="outline" size="icon" asChild>
+                      <a
+                        href={problem.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <IconExternalLink className="size-4" />
+                        <span className="sr-only">Open on LeetCode</span>
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Read-only: Attempts and Last Attempted */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-3">
+                    <Label>Total Attempts</Label>
+                    <Input value={problem.total_attempts} disabled />
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <Label>Last Attempted</Label>
+                    <Input
+                      value={formatRelativeDate(problem.last_attempted)}
+                      disabled
+                    />
+                  </div>
+                </div>
+              </form>
             </div>
-          </form>
-        </div>
+          </TabsContent>
+          <TabsContent value="history" className="flex-1 overflow-y-auto mt-0 px-4">
+            <SolveHistoryList problemId={problem._id} />
+          </TabsContent>
+        </Tabs>
         <DrawerFooter>
           <Button onClick={handleSave} disabled={isPending}>
             {isPending ? "Saving..." : "Save Changes"}
