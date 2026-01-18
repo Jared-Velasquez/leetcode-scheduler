@@ -24,20 +24,65 @@ import {
 import { createProblemAction } from "@/app/actions/problems";
 import { PATTERNS, getPatternById, type PatternIdType } from "@/lib/constants/patterns";
 import { LeetcodeDifficulty } from "@/types";
+import {
+  extractTitleSlug,
+  fetchProblemDetailsFromUrl,
+} from "@/services/leetcode-api.service";
+import { toast } from "sonner";
 
 export function AddProblemDialog() {
   const [open, setOpen] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
   const [error, setError] = React.useState<string | null>(null);
+  const [isFetchingDetails, setIsFetchingDetails] = React.useState(false);
+  const [hasFetchedDetails, setHasFetchedDetails] = React.useState(false);
 
-  // Form state
+  // Form state - fetched from API (read-only)
   const [leetcodeNumber, setLeetcodeNumber] = React.useState("");
   const [title, setTitle] = React.useState("");
-  const [url, setUrl] = React.useState("");
   const [difficulty, setDifficulty] = React.useState<string>("");
+
+  // Form state - user input
+  const [url, setUrl] = React.useState("");
   const [pattern, setPattern] = React.useState("");
   const [subpattern, setSubpattern] = React.useState("");
   const [notes, setNotes] = React.useState("");
+
+  // Auto-fetch problem details when URL changes
+  React.useEffect(() => {
+    const titleSlug = extractTitleSlug(url);
+    if (!titleSlug) {
+      // Clear fetched fields if URL is cleared or invalid
+      if (hasFetchedDetails) {
+        setLeetcodeNumber("");
+        setTitle("");
+        setDifficulty("");
+        setHasFetchedDetails(false);
+      }
+      return;
+    }
+
+    setIsFetchingDetails(true);
+    setError(null);
+
+    fetchProblemDetailsFromUrl(url)
+      .then((details) => {
+        setLeetcodeNumber(details.questionId);
+        setTitle(details.title);
+        setDifficulty(details.difficulty);
+        setHasFetchedDetails(true);
+      })
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : "Failed to fetch problem details");
+        setLeetcodeNumber("");
+        setTitle("");
+        setDifficulty("");
+        setHasFetchedDetails(false);
+      })
+      .finally(() => {
+        setIsFetchingDetails(false);
+      });
+  }, [url, hasFetchedDetails]);
 
   // Get subpatterns for selected pattern
   const selectedPattern = pattern ? getPatternById(pattern as PatternIdType) : null;
@@ -57,20 +102,31 @@ export function AddProblemDialog() {
     setSubpattern("");
     setNotes("");
     setError(null);
+    setHasFetchedDetails(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (!leetcodeNumber || !title || !difficulty || !pattern) {
-      setError("Please fill in all required fields");
+    if (!url) {
+      setError("Please enter a LeetCode problem URL");
+      return;
+    }
+
+    if (!hasFetchedDetails || !leetcodeNumber || !title || !difficulty) {
+      setError("Please wait for problem details to load");
+      return;
+    }
+
+    if (!pattern) {
+      setError("Please select a pattern");
       return;
     }
 
     const num = parseInt(leetcodeNumber);
     if (isNaN(num) || num <= 0) {
-      setError("LeetCode number must be a positive integer");
+      setError("Failed to parse LeetCode number from URL");
       return;
     }
 
@@ -78,7 +134,7 @@ export function AddProblemDialog() {
       const result = await createProblemAction({
         leetcodeNumber: num,
         title,
-        url: url || undefined,
+        url,
         leetcodeDifficulty: difficulty as LeetcodeDifficulty,
         patternId: pattern,
         subpatternId: subpattern || undefined,
@@ -88,6 +144,9 @@ export function AddProblemDialog() {
       if (result.success) {
         resetForm();
         setOpen(false);
+        toast.success("Problem added", {
+          description: `${title} has been added to your collection.`,
+        });
       } else {
         setError(result.error ?? "Failed to create problem");
       }
@@ -116,58 +175,48 @@ export function AddProblemDialog() {
                 {error}
               </div>
             )}
-            <div className="grid grid-cols-4 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="leetcode-number">Number *</Label>
-                <Input
-                  id="leetcode-number"
-                  type="number"
-                  min="1"
-                  placeholder="1"
-                  value={leetcodeNumber}
-                  onChange={(e) => setLeetcodeNumber(e.target.value)}
-                  disabled={isPending}
-                />
-              </div>
-              <div className="flex flex-col gap-3 col-span-3">
-                <Label htmlFor="problem-title">Title *</Label>
-                <Input
-                  id="problem-title"
-                  placeholder="Two Sum"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  disabled={isPending}
-                />
-              </div>
-            </div>
             <div className="flex flex-col gap-3">
-              <Label htmlFor="problem-url">LeetCode URL (optional)</Label>
+              <Label htmlFor="problem-url">
+                LeetCode URL *
+                {isFetchingDetails && (
+                  <span className="ml-2 text-muted-foreground text-xs">
+                    Fetching details...
+                  </span>
+                )}
+              </Label>
               <Input
                 id="problem-url"
                 type="url"
                 placeholder="https://leetcode.com/problems/two-sum/"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                disabled={isPending}
+                disabled={isPending || isFetchingDetails}
               />
             </div>
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="problem-difficulty">Difficulty *</Label>
-              <Select
-                value={difficulty}
-                onValueChange={setDifficulty}
-                disabled={isPending}
-              >
-                <SelectTrigger id="problem-difficulty">
-                  <SelectValue placeholder="Select difficulty" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="easy">Easy</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="hard">Hard</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {hasFetchedDetails && (
+              <div className="rounded-md border bg-muted/50 p-3">
+                <div className="grid grid-cols-4 gap-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs text-muted-foreground">Number</span>
+                    <span className="text-sm font-medium">{leetcodeNumber}</span>
+                  </div>
+                  <div className="flex flex-col gap-1 col-span-2">
+                    <span className="text-xs text-muted-foreground">Title</span>
+                    <span className="text-sm font-medium">{title}</span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs text-muted-foreground">Difficulty</span>
+                    <span className={`text-sm font-medium capitalize ${
+                      difficulty === 'easy' ? 'text-green-600 dark:text-green-400' :
+                      difficulty === 'medium' ? 'text-yellow-600 dark:text-yellow-400' :
+                      'text-red-600 dark:text-red-400'
+                    }`}>
+                      {difficulty}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="problem-pattern">Pattern *</Label>

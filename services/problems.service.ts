@@ -171,7 +171,13 @@ export async function createProblem(
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    // PostgreSQL unique constraint violation
+    if (error.code === '23505') {
+      throw new Error(`Problem #${dto.leetcodeNumber} already exists in your collection`);
+    }
+    throw error;
+  }
   return mapDbToProblem(data as DbProblem);
 }
 
