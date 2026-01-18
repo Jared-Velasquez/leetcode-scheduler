@@ -133,3 +133,79 @@ export async function getAllUserSolves(
   if (error) throw error;
   return (data as DbSolve[]).map(mapDbToSolve);
 }
+
+export interface DifficultyStats {
+  count: number;
+  percentChange: number | null; // null when no solves last week (can't calculate percentage)
+}
+
+export interface SolveStatsByDifficulty {
+  easy: DifficultyStats;
+  medium: DifficultyStats;
+  hard: DifficultyStats;
+}
+
+export async function getSolveStatsByDifficulty(
+  supabase: SupabaseClient
+): Promise<SolveStatsByDifficulty> {
+  const now = new Date();
+  const startOfThisWeek = new Date(now);
+  startOfThisWeek.setDate(now.getDate() - 7);
+  startOfThisWeek.setHours(0, 0, 0, 0);
+
+  const startOfLastWeek = new Date(startOfThisWeek);
+  startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
+
+  // Fetch all solves with their problem's leetcode_difficulty
+  const { data, error } = await supabase
+    .from('solves')
+    .select(`
+      solved_at,
+      problems!inner (
+        leetcode_difficulty
+      )
+    `)
+    .gte('solved_at', startOfLastWeek.toISOString());
+
+  if (error) throw error;
+
+  // Count solves by difficulty and time period
+  const thisWeekCounts = { easy: 0, medium: 0, hard: 0 };
+  const lastWeekCounts = { easy: 0, medium: 0, hard: 0 };
+
+  for (const solve of data || []) {
+    const solvedAt = new Date(solve.solved_at);
+    // Supabase returns the joined table - extract leetcode_difficulty
+    const problemData = solve.problems as unknown as { leetcode_difficulty: string };
+    const difficulty = problemData.leetcode_difficulty as 'easy' | 'medium' | 'hard';
+
+    if (solvedAt >= startOfThisWeek) {
+      thisWeekCounts[difficulty]++;
+    } else {
+      lastWeekCounts[difficulty]++;
+    }
+  }
+
+  // Calculate percentage changes
+  const calculatePercentChange = (thisWeek: number, lastWeek: number): number | null => {
+    if (lastWeek === 0) {
+      return thisWeek > 0 ? null : null; // Can't calculate percentage from 0
+    }
+    return Math.round(((thisWeek - lastWeek) / lastWeek) * 100);
+  };
+
+  return {
+    easy: {
+      count: thisWeekCounts.easy,
+      percentChange: calculatePercentChange(thisWeekCounts.easy, lastWeekCounts.easy),
+    },
+    medium: {
+      count: thisWeekCounts.medium,
+      percentChange: calculatePercentChange(thisWeekCounts.medium, lastWeekCounts.medium),
+    },
+    hard: {
+      count: thisWeekCounts.hard,
+      percentChange: calculatePercentChange(thisWeekCounts.hard, lastWeekCounts.hard),
+    },
+  };
+}
