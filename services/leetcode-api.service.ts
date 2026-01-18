@@ -1,7 +1,5 @@
 import { LeetcodeDifficulty } from "@/types";
 
-const LEETCODE_API_BASE_URL = "https://alfa-leetcode-api.onrender.com";
-
 export interface LeetcodeProblemDetails {
   questionId: string;
   title: string;
@@ -18,33 +16,31 @@ export function extractTitleSlug(url: string): string | null {
 }
 
 /**
- * Fetch problem details from LeetCode using the alfa-leetcode-api
- * Results are cached globally since problem data is static
+ * Fetch problem details via our API route (to avoid CORS issues)
  */
 export async function fetchProblemDetails(
   titleSlug: string,
 ): Promise<LeetcodeProblemDetails> {
-  const response = await fetch(
-    `${LEETCODE_API_BASE_URL}/select?titleSlug=${encodeURIComponent(titleSlug)}`,
-  );
+  const response = await fetch("/api/leetcode", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ titleSlug }),
+  });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch problem details from LeetCode");
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || "Failed to fetch problem details");
   }
 
   const data = await response.json();
 
-  if (!data.questionId || !data.questionTitle || !data.difficulty) {
-    throw new Error("Invalid response from LeetCode API");
-  }
-
-  const problemDetails: LeetcodeProblemDetails = {
+  return {
     questionId: data.questionId,
-    title: data.questionTitle,
-    difficulty: data.difficulty.toLowerCase() as LeetcodeDifficulty,
+    title: data.title,
+    difficulty: data.difficulty as LeetcodeDifficulty,
   };
-
-  return problemDetails;
 }
 
 /**
