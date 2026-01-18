@@ -201,7 +201,7 @@ export default function LandingPage() {
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Button size="lg" asChild>
-              <Link href="/signup">Create your free account</Link>
+              <Link href="/signup">Create your account</Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <Link href="/login">Sign in</Link>
