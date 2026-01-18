@@ -23,6 +23,7 @@ import {
 import { recordSolveAction } from "@/app/actions/solves";
 import { PersonalDifficulty } from "@/types";
 import { PERSONAL_DIFFICULTIES } from "@/lib/constants/difficulties";
+import { toast } from "sonner";
 
 interface RecordAttemptDialogProps {
   problemId: string;
@@ -79,6 +80,9 @@ export function RecordAttemptDialog({
       if (result.success) {
         resetForm();
         onOpenChange(false);
+        toast.success("Attempt recorded", {
+          description: `Your attempt for "${problemTitle}" has been saved.`,
+        });
       } else {
         setError(result.error ?? "Failed to record attempt");
       }

@@ -28,6 +28,7 @@ import {
   extractTitleSlug,
   fetchProblemDetailsFromUrl,
 } from "@/services/leetcode-api.service";
+import { toast } from "sonner";
 
 export function AddProblemDialog() {
   const [open, setOpen] = React.useState(false);
@@ -143,6 +144,9 @@ export function AddProblemDialog() {
       if (result.success) {
         resetForm();
         setOpen(false);
+        toast.success("Problem added", {
+          description: `${title} has been added to your collection.`,
+        });
       } else {
         setError(result.error ?? "Failed to create problem");
       }
