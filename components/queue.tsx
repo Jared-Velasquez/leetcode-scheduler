@@ -162,7 +162,9 @@ const columns: ColumnDef<z.infer<typeof queueSchema>>[] = [
             <div
               key={level}
               className={`h-2 w-2 rounded-full ${
-                level <= (6 - row.original.understanding) ? "bg-primary" : "bg-muted"
+                level <= 6 - row.original.understanding
+                  ? "bg-primary"
+                  : "bg-muted"
               }`}
             />
           ))}
@@ -175,7 +177,7 @@ const columns: ColumnDef<z.infer<typeof queueSchema>>[] = [
   },
   {
     accessorKey: "due_date",
-    header: "Due Date",
+    header: "Review Date",
     cell: ({ row }) => (
       <span className="text-muted-foreground">
         {row.original.due_date.toLocaleDateString()}
@@ -184,7 +186,7 @@ const columns: ColumnDef<z.infer<typeof queueSchema>>[] = [
   },
   {
     accessorKey: "days_left",
-    header: () => <div className="text-right">Days Left</div>,
+    header: () => <div className="text-right">Days Until Next Review</div>,
     cell: ({ row }) => {
       const daysLeft = row.original.days_left;
       return (

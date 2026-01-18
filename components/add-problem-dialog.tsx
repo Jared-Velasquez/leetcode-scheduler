@@ -24,11 +24,16 @@ import {
 import { createProblemAction } from "@/app/actions/problems";
 import { PATTERNS, getPatternById, type PatternIdType } from "@/lib/constants/patterns";
 import { LeetcodeDifficulty } from "@/types";
+import {
+  extractTitleSlug,
+  fetchProblemDetailsFromUrl,
+} from "@/services/leetcode-api.service";
 
 export function AddProblemDialog() {
   const [open, setOpen] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
   const [error, setError] = React.useState<string | null>(null);
+  const [isFetchingDetails, setIsFetchingDetails] = React.useState(false);
 
   // Form state
   const [leetcodeNumber, setLeetcodeNumber] = React.useState("");
@@ -38,6 +43,28 @@ export function AddProblemDialog() {
   const [pattern, setPattern] = React.useState("");
   const [subpattern, setSubpattern] = React.useState("");
   const [notes, setNotes] = React.useState("");
+
+  // Auto-fetch problem details when URL changes
+  React.useEffect(() => {
+    const titleSlug = extractTitleSlug(url);
+    if (!titleSlug) return;
+
+    setIsFetchingDetails(true);
+    setError(null);
+
+    fetchProblemDetailsFromUrl(url)
+      .then((details) => {
+        setLeetcodeNumber(details.questionId);
+        setTitle(details.title);
+        setDifficulty(details.difficulty);
+      })
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : "Failed to fetch problem details");
+      })
+      .finally(() => {
+        setIsFetchingDetails(false);
+      });
+  }, [url]);
 
   // Get subpatterns for selected pattern
   const selectedPattern = pattern ? getPatternById(pattern as PatternIdType) : null;
@@ -141,14 +168,21 @@ export function AddProblemDialog() {
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <Label htmlFor="problem-url">LeetCode URL (optional)</Label>
+              <Label htmlFor="problem-url">
+                LeetCode URL (optional)
+                {isFetchingDetails && (
+                  <span className="ml-2 text-muted-foreground text-xs">
+                    Fetching details...
+                  </span>
+                )}
+              </Label>
               <Input
                 id="problem-url"
                 type="url"
                 placeholder="https://leetcode.com/problems/two-sum/"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                disabled={isPending}
+                disabled={isPending || isFetchingDetails}
               />
             </div>
             <div className="flex flex-col gap-3">
