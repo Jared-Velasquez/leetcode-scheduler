@@ -7,6 +7,7 @@ import {
   IconChevronsLeft,
   IconChevronsRight,
   IconDotsVertical,
+  IconExternalLink,
 } from "@tabler/icons-react";
 import {
   flexRender,
@@ -35,6 +36,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { ProblemDrawer } from "@/components/problem-drawer";
+import { RecordAttemptDialog } from "@/components/record-attempt-dialog";
 import {
   Select,
   SelectContent,
@@ -194,7 +196,21 @@ const columns: ColumnDef<z.infer<typeof queueSchema>>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => (
+    cell: ({ row }) => <ActionsCell item={row.original} />,
+  },
+];
+
+function ActionsCell({ item }: { item: z.infer<typeof queueSchema> }) {
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
+  return (
+    <div className="flex items-center gap-2">
+      <RecordAttemptDialog
+        problemId={item._id}
+        problemTitle={item.title}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -206,14 +222,23 @@ const columns: ColumnDef<z.infer<typeof queueSchema>>[] = [
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Reschedule</DropdownMenuItem>
-          <DropdownMenuItem>View Problem</DropdownMenuItem>
+        <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuItem asChild>
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <IconExternalLink className="size-4" />
+              View on LeetCode
+            </a>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    ),
-  },
-];
+    </div>
+  );
+}
 
 function useQueueTable(data: z.infer<typeof queueSchema>[]) {
   const [rowSelection, setRowSelection] = React.useState({});
