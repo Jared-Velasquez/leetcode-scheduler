@@ -12,7 +12,7 @@ export default function LandingPage() {
           </span>
         </h1>
 
-        <p className="mb-10 text-lg text-zinc-400">
+        <p className="mb-10 text-lg text-slate-300">
           Track your LeetCode progress with spaced repetition. Never forget a
           solution again.
         </p>
@@ -28,7 +28,7 @@ export default function LandingPage() {
           <Button
             size="lg"
             variant="outline"
-            className="border-zinc-700 bg-transparent text-zinc-300 hover:bg-zinc-800 hover:text-white"
+            className="border-slate-500 bg-transparent text-slate-200 hover:bg-slate-600 hover:text-white"
             asChild
           >
             <Link href="/login">Log in</Link>
