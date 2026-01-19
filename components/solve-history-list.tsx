@@ -59,7 +59,7 @@ function formatDate(dateString: string): string {
 
 function getDifficultyLabel(value: PersonalDifficulty): string {
   const difficulty = PERSONAL_DIFFICULTIES.find((d) => d.value === value);
-  return difficulty?.label ?? "Unknown";
+  return difficulty?.label ?? "Uncategorized";
 }
 
 interface SolveHistoryListProps {

@@ -1,6 +1,6 @@
 // Pattern IDs as const for type safety
 export const PatternId = {
-  UNKNOWN: 'unknown',
+  UNCATEGORIZED: 'uncategorized',
   ARRAYS: 'arrays',
   TWO_POINTERS: 'two_pointers',
   SLIDING_WINDOW: 'sliding_window',
@@ -90,8 +90,8 @@ export interface SubpatternDefinition {
 
 export const PATTERNS: PatternDefinition[] = [
   {
-    id: 'unknown',
-    label: 'Unknown',
+    id: 'uncategorized',
+    label: 'Uncategorized',
     subpatterns: [],
   },
   {
