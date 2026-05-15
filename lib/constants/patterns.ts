@@ -1,5 +1,6 @@
 // Pattern IDs as const for type safety
 export const PatternId = {
+  UNCATEGORIZED: 'uncategorized',
   ARRAYS: 'arrays',
   TWO_POINTERS: 'two_pointers',
   SLIDING_WINDOW: 'sliding_window',
@@ -45,7 +46,6 @@ export const SubpatternId = {
   // Trees
   BINARY_TREE: 'binary_tree',
   BST: 'bst',
-  SEGMENT_TREE: 'segment_tree',
   FENWICK_TREE: 'fenwick_tree',
   // Graphs
   BFS: 'bfs',
@@ -73,6 +73,9 @@ export const SubpatternId = {
   // Intervals
   MERGE_INTERVALS: 'merge_intervals',
   INSERT_INTERVAL: 'insert_interval',
+  NON_OVERLAPPING: 'non_overlapping',
+  SEGMENT_TREE: 'segment_tree',
+  LINE_SWEEP: 'line_sweep',
 } as const;
 
 export type SubpatternIdType = (typeof SubpatternId)[keyof typeof SubpatternId];
@@ -89,6 +92,11 @@ export interface SubpatternDefinition {
 }
 
 export const PATTERNS: PatternDefinition[] = [
+  {
+    id: 'uncategorized',
+    label: 'Uncategorized',
+    subpatterns: [],
+  },
   {
     id: 'arrays',
     label: 'Arrays & Hashing',
@@ -145,7 +153,6 @@ export const PATTERNS: PatternDefinition[] = [
     subpatterns: [
       { id: 'binary_tree', label: 'Binary Tree Traversal' },
       { id: 'bst', label: 'Binary Search Tree' },
-      { id: 'segment_tree', label: 'Segment Tree' },
       { id: 'fenwick_tree', label: 'Fenwick Tree (BIT)' },
     ],
   },
@@ -203,6 +210,9 @@ export const PATTERNS: PatternDefinition[] = [
     subpatterns: [
       { id: 'merge_intervals', label: 'Merge Intervals' },
       { id: 'insert_interval', label: 'Insert Interval' },
+      { id: 'non_overlapping', label: 'Non-overlapping Intervals' },
+      { id: 'segment_tree', label: 'Segment Tree' },
+      { id: 'line_sweep', label: 'Line Sweep' },
     ],
   },
   {
