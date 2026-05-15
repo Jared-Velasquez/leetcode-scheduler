@@ -221,6 +221,17 @@ const columns: ColumnDef<Problem>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "problem_id",
+    header: "#",
+    cell: ({ row }) => (
+      <span className="text-muted-foreground tabular-nums">
+        {row.original.problem_id}
+      </span>
+    ),
+    filterFn: (row, columnId, filterValue) =>
+      String(row.getValue(columnId)).includes(String(filterValue).trim()),
+  },
+  {
     accessorKey: "difficulty",
     header: "Difficulty",
     cell: ({ row }) => (
@@ -422,8 +433,22 @@ function useProblemsTable(data: Problem[]) {
 export function ProblemsTable({ data }: { data: Problem[] }) {
   const table = useProblemsTable(data);
 
+  const idFilter =
+    (table.getColumn("problem_id")?.getFilterValue() as string) ?? "";
+
   return (
     <div className="flex flex-col gap-4 xl:max-w-6xl mx-auto w-full">
+      <div className="flex items-center">
+        <Input
+          placeholder="Search by problem ID..."
+          value={idFilter}
+          onChange={(e) =>
+            table.getColumn("problem_id")?.setFilterValue(e.target.value)
+          }
+          inputMode="numeric"
+          className="w-full md:max-w-xs"
+        />
+      </div>
       <div className="overflow-hidden rounded-lg border">
         <Table>
           <TableHeader className="bg-muted sticky top-0 z-10">

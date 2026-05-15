@@ -61,6 +61,7 @@ export const SubpatternId = {
   MATRIX_DP: 'matrix_dp',
   STATE_MACHINE: 'state_machine',
   INTERVAL_DP: 'interval_dp',
+  TOP_DOWN: 'top_down',
   // Backtracking
   PERMUTATIONS: 'permutations',
   COMBINATIONS: 'combinations',
@@ -170,6 +171,7 @@ export const PATTERNS: PatternDefinition[] = [
       { id: 'matrix_dp', label: 'Matrix DP' },
       { id: 'state_machine', label: 'State Machine DP' },
       { id: 'interval_dp', label: 'Interval DP' },
+      { id: 'top_down', label: 'Top-Down' },
     ],
   },
   {
